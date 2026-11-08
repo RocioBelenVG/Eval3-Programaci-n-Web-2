@@ -59,6 +59,17 @@ export async function api(metodo, ruta, { body, query, signal } = {}) {
   return data;
 }
 
+/** Descarga un archivo de la API (con el JWT) sin bloquear la interfaz; devuelve {blob, nombre}. */
+export async function descargar(ruta, query) {
+  const url = new URL(BASE + ruta, location.origin);
+  for (const [k, v] of Object.entries(query || {})) if (v !== undefined && v !== null && v !== '') url.searchParams.set(k, v);
+  const res = await fetch(url, { headers: { Authorization: `Bearer ${sesion.get()?.token}` } });
+  if (!res.ok) throw new ApiError(res.status, await res.json().catch(() => null));
+  const cd = res.headers.get('Content-Disposition') || '';
+  const nombre = (cd.match(/filename="([^"]+)"/) || [])[1] || 'reporte';
+  return { blob: await res.blob(), nombre };
+}
+
 export const get = (ruta, query, signal) => api('GET', ruta, { query, signal });
 export const post = (ruta, body) => api('POST', ruta, { body });
 export const put = (ruta, body) => api('PUT', ruta, { body });

@@ -5,6 +5,7 @@ import { html, anunciar, toast, validarFormulario, erroresDeApi, ocupado } from 
 import * as viajes from './views/viajes.js';
 import * as flota from './views/flota.js';
 import * as ia from './views/ia.js';
+import * as analisis from './views/analisis.js';
 
 const A = 'Administrador', S = 'Supervisor', C = 'Conductor', G = 'Gerencia';
 const TODOS = [A, S, C, G];
@@ -20,14 +21,18 @@ const RUTAS = [
   { re: /^\/flota$/, vista: flota.vehiculos, roles: TODOS, titulo: 'Flota', menu: 'flota' },
   { re: /^\/flota\/(\d+)$/, vista: flota.rendimiento, roles: [A, S, G], titulo: 'Rendimiento del vehículo', menu: 'flota' },
   { re: /^\/ia$/, vista: ia.resumen, roles: [A, S, G], titulo: 'Resumen con IA', menu: 'ia' },
+  { re: /^\/dashboard$/, vista: analisis.dashboard, roles: [A, S, G], titulo: 'Dashboard', menu: 'dashboard' },
+  { re: /^\/reportes$/, vista: analisis.reportes, roles: [A, S, G], titulo: 'Reportes', menu: 'reportes' },
 ];
 
 const MENU = [
+  { id: 'dashboard', href: '#/dashboard', texto: () => 'Dashboard', icono: '📊', roles: [A, S, G] },
   { id: 'viajes', href: '#/viajes', texto: (r) => (r === C ? 'Mis viajes' : 'Viajes'), icono: '🚚', roles: TODOS },
   { id: 'nuevo', href: '#/viajes/nuevo', texto: () => 'Programar viaje', icono: '＋', roles: [A, S] },
   { id: 'cargas', href: '#/cargas', texto: () => 'Combustible', icono: '⛽', roles: TODOS },
   { id: 'mantenciones', href: '#/mantenciones', texto: () => 'Mantenciones', icono: '🔧', roles: [A, S, G] },
   { id: 'flota', href: '#/flota', texto: () => 'Flota', icono: '🚛', roles: TODOS },
+  { id: 'reportes', href: '#/reportes', texto: () => 'Reportes', icono: '📄', roles: [A, S, G] },
   { id: 'ia', href: '#/ia', texto: () => 'Resumen con IA', icono: '✨', roles: [A, S, G] },
 ];
 
