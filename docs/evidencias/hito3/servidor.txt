@@ -1,0 +1,18 @@
+Verificación en el servidor de demostración — 2026-11-08 22:13 UTC
+
+GET /health
+{"status":"ok","db":"ok","migraciones":7}
+
+POST /ia/resumen sin GROQ_API_KEY en el servidor (esperado 503)
+{"error":{"code":"IA_NO_CONFIGURADA","message":"El servicio de IA no está configurado en este ambiente (falta GROQ_API_KEY).","request_id":"43d2cf8d2f871f60"}} [HTTP 503]
+
+POST /ia/resumen con período inválido (esperado 422)
+{"error":{"code":"VALIDATION_ERROR","message":"Los datos enviados no son válidos.","details":[{"field":"hasta","message":"La fecha final debe ser igual o posterior a la inicial."}],"request_id":"d27b3a2931d01225"}} [HTTP 422]
+
+GET /conductores con token de Gerencia (esperado 403)
+{"error":{"code":"SIN_PERMISO","message":"Su rol no tiene permiso para esta acción.","request_id":"76d9e14be401ce06"}} [HTTP 403]
+
+GET /TriTransportes/app/ → 200
+GET /TriTransportes/app/js/main.js → 200
+GET /TriTransportes/api/docs/ → 200
+GET /TriTransportes/docs/openapi.yaml → 200
