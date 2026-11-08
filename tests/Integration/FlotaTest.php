@@ -50,6 +50,14 @@ final class FlotaTest extends ApiTestCase
     }
 
     #[Test]
+    public function el_trigger_de_la_base_impide_una_carga_de_vehiculo_sin_vehiculo(): void
+    {
+        $this->expectException(\PDOException::class);
+        $this->expectExceptionMessage('vehículo o de un equipo');
+        self::$db->pdo->exec("INSERT INTO cargas_combustible (empresa_id, fecha, tipo_unidad, vehiculo_id, litros) VALUES (1, CURDATE(), 'vehiculo', NULL, 100)");
+    }
+
+    #[Test]
     public function el_listado_de_vehiculos_busca_por_patente(): void
     {
         $patente = self::$db->pdo->query("SELECT patente FROM vehiculos WHERE id = {$this->vehiculoId}")->fetchColumn();
