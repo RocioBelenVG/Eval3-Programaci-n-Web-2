@@ -1,0 +1,16 @@
+Auditoría automática de accesibilidad · axe-core 4.10.2 · reglas wcag2a, wcag2aa, wcag21aa, wcag22aa
+Fecha: 8 de noviembre de 2026 · Chromium · aplicación /TriTransportes/app/ local contra la API simulada
+
+Vista / estado                                                  Infracciones
+#/dashboard (6 KPI, narrativa, 4 gráficos)                      0
+#/dashboard con las 4 tablas de datos desplegadas               0
+#/reportes?r=operativo-viajes (tabla paginada con totales)      0
+#/reportes?r=gerencial-mensual (gráfico, tabla y totales)       0   (antes: 1, ver abajo)
+#/reportes?r=combustible-periodo                                0
+
+Hallazgo corregido: "scrollable-region-focusable" (1 nodo) en el reporte gerencial: la tabla ancha se desplazaba
+horizontalmente pero no podía recibir el foco. Todo contenedor de tabla pasó a ser una región enfocable con nombre
+(tabindex=0, role=region, aria-label con el título de la tabla); la auditoría repetida dio 0 infracciones.
+
+360 px: dashboard y los 3 reportes sin desplazamiento horizontal (scrollWidth = clientWidth = 360).
+Las 12 vistas del Hito 3 siguen en 0 infracciones (docs/evidencias/hito3/axe-core.txt).

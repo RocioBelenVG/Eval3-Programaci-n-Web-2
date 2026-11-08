@@ -1,7 +1,9 @@
 /* Complementos de la aplicación sobre tt-design.css (mismos tokens). */
 
 /* Sin sesión: sin menú ni barra superior */
-#app:not(.tt-app) .tt-sidebar, #app:not(.tt-app) .tt-topbar { display: none !important; }
+html:not(.con-sesion) #app:not(.tt-app) .tt-sidebar, html:not(.con-sesion) #app:not(.tt-app) .tt-topbar { display: none !important; }
+@media (min-width: 64em) { .con-sesion #app { display: grid; grid-template-columns: var(--tt-sidebar-w) 1fr; min-height: 100vh; } }
+.tt-main { min-height: 60vh; }
 .tt-shell { min-width: 0; display: flex; flex-direction: column; min-height: 100vh; }
 #contenido:focus { outline: none; }
 /* El h1 recibe el foco por programa al cambiar de vista (para el lector de pantalla); no es un control,

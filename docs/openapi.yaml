@@ -9,8 +9,9 @@ info:
     cualquier ruta puede responder 400 (cuerpo que no es JSON), 405 (método no permitido, con `Allow`),
     429 (más de 120 solicitudes por minuto por usuario) y 500 (con `request_id` para rastrear el error).
     Toda respuesta incluye el encabezado `X-Request-Id`.
-    Estado de implementación (Hito 3): auth, viajes, guías, cargas, vehículos, catálogos,
-    mantenciones, salud e IA. Dashboard y reportes se implementan en el Hito 4.
+    Estado de implementación (Hito 4): todas las rutas de este contrato están implementadas y probadas.
+    Reportes: operativo-viajes (Administrador, Supervisor, Gerencia), gerencial-mensual (Administrador, Gerencia)
+    y combustible-periodo (Administrador, Supervisor, Gerencia). Toda exportación queda en la auditoría.
 servers:
   - url: https://trivoxa.cl/TriTransportes/api/v1
     description: Demostración (Hostinger)

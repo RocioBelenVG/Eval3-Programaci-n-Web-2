@@ -1,0 +1,18 @@
+Lighthouse 12.2.1 · Chrome headless · 8 de noviembre de 2026
+Categorías: accesibilidad, rendimiento y buenas prácticas.
+
+Pantalla                         Origen                          Perfil      Accesib.  Rend.  B. prácticas  LCP    CLS
+Inicio de sesión                 trivoxa.cl (demostración)       celular       100      99         100    1.0 s  0
+Inicio de sesión                 trivoxa.cl (demostración)       escritorio    100      99         100    0.3 s  0
+Listado de viajes (Supervisor)   local, API simulada             escritorio    100     100         100    0.5 s  0.001
+Programar viaje                  local, API simulada             escritorio    100     100         100    0.5 s  0
+Dashboard (Gerencia)             local, API simulada             escritorio    100      99         100    0.9 s  0.001
+Reportes (Gerencia)              local, API simulada             escritorio    100     100         100    0.6 s  0
+Resumen con IA                   local, API simulada             escritorio    100     100         100    0.4 s  0
+Mis viajes (Conductor)           local, API simulada             escritorio    100     100         100    0.5 s  0
+
+Resultado: accesibilidad 100 en las 8 mediciones (0 auditorías de accesibilidad fallidas) y buenas prácticas 100.
+Hallazgo corregido: la primera medición dio CLS 0,19 y rendimiento 90–91 en las pantallas con sesión, porque el menú lateral
+aparecía después de ejecutar el JavaScript y desplazaba el contenido. Se reservó su espacio desde el primer pintado
+(clase con-sesion en <html>); el CLS bajó a 0,001 y el rendimiento a 99–100.
+Las pantallas con sesión se midieron en local contra una API simulada con respuestas capturadas de la API real, para no escribir credenciales en el sitio público.

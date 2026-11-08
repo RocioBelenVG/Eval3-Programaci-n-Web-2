@@ -1,0 +1,18 @@
+RNF02 · Dashboard en menos de 2 s con 12 meses de datos · 8 de noviembre de 2026
+
+1) API en el servidor de demostración (HTTPS, 10 solicitudes por endpoint, período 01-11-2025 al 08-11-2026):
+   GET /dashboard/kpis                              p50  42 ms · máx  74 ms
+   GET /dashboard/series?serie=viajes_mes           p50  56 ms · máx  89 ms
+   GET /dashboard/series?serie=costo_combustible_mes p50 39 ms · máx  77 ms
+   GET /dashboard/series?serie=rendimiento_vehiculo p50  28 ms · máx  39 ms
+   GET /dashboard/series?serie=viajes_por_estado    p50  25 ms · máx  59 ms
+   Las 5 consultas se piden en paralelo desde la interfaz.
+
+2) Interfaz (Lighthouse 12.2.1, escritorio): Largest Contentful Paint 0,9 s; rendimiento 99; CLS 0,001.
+   La propia pantalla muestra "Actualizado en N ms" (115 ms en la medición local, con los 4 gráficos dibujados).
+
+3) Exportaciones del reporte operativo de 12 meses (≈ 7.000 filas) desde el servidor:
+   CSV 1,1 MB en 0,45 s · XLSX 0,4 MB en 0,41 s · PDF 1,9 MB en 0,99 s.
+   La interfaz las descarga con fetch en segundo plano (botón ocupado y aviso al terminar): la página no se bloquea.
+
+Resultado: cumple (≤ 1 s de extremo a extremo frente al umbral de 2 s).

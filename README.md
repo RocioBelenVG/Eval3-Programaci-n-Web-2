@@ -3,13 +3,15 @@
 Sistema web de gestión de **flota, transporte y combustible** para una empresa de transporte de carga (ficticia: TRITRANSPORTES SpA).
 Es el proyecto integrador de la **Evaluación 3 de Lenguaje de Programación Web II**.
 
-> Estado: **Hito 3 — front end, contenedores e IA**. Interfaz por rol conectada a la API (`/app/`), endpoint de IA `POST /ia/resumen` con Groq, `docker compose up` con cinco servicios y pipeline de GitHub Actions. Las 74 pruebas automatizadas pasan ([evidencia del Hito 2](docs/evidencias/hito2/) y [del Hito 3](docs/evidencias/hito3/)). El dashboard y los reportes se incorporan en el Hito 4 (ver [plan de adaptación](docs/PLAN_ADAPTACION.md)).
+> Estado: **Hito 4 — análisis, reportes y plan de despliegue**. Dashboard con 6 indicadores y 4 gráficos accesibles, 3 reportes exportables a Excel, PDF y CSV con vista de impresión, y [plan de despliegue](docs/05_plan_despliegue.md). Las 83 pruebas automatizadas pasan; Lighthouse da accesibilidad 100 en todas las pantallas (evidencia de los hitos [2](docs/evidencias/hito2/), [3](docs/evidencias/hito3/) y [4](docs/evidencias/hito4/)).
 
 ## Documentación
 
 | Documento | Contenido |
 |---|---|
 | Informe técnico (PDF) | `Informe_Tecnico_TriTransportes.pdf`, en la carpeta de entrega: las 11 secciones de la pauta, matriz de cumplimiento y rúbrica autoevaluada |
+| [Evidencia del Hito 4](docs/evidencias/hito4/) | Lighthouse, axe, tiempos del dashboard (RNF02), archivos exportados de los 3 reportes y protocolos de NVDA y del ensayo |
+| [05 · Plan de despliegue](docs/05_plan_despliegue.md) | Los 10 apartados de la pauta: entornos, infraestructura, pasos, secretos, reversión, respaldo, monitoreo, seguridad, costos y lista de verificación |
 | [Evidencia del Hito 3](docs/evidencias/hito3/) | Auditoría axe-core de la interfaz, pruebas de IA y verificación de contenedores |
 | [Evidencia del Hito 2](docs/evidencias/hito2/) | Salida de PHPUnit (testdox y JUnit), estado de las migraciones, verificación de la base y prueba de humo de la API |
 | [01 · Requerimientos](docs/01_requerimientos.md) | Dominio, roles, requerimientos funcionales y no funcionales, historias de usuario, casos de uso y plan de trabajo |
@@ -61,6 +63,17 @@ Aplicación de una página en `app/` (HTML, CSS y JavaScript nativo, sin framewo
 - Listado de viajes con búsqueda, filtros, orden por columna y paginación; ficha con la máquina de estados; formularios con validación inmediata y resumen de errores enlazado a cada campo.
 - Responsive de 360 a 1440 px sin desplazamiento horizontal; tablas apiladas en celular; menú colapsable que se cierra con Esc.
 - Accesibilidad WCAG 2.2 AA: enlace para saltar al contenido, foco visible y gestionado en cada cambio de vista, anuncios con `aria-live` y modales con `<dialog>`. axe-core no encuentra infracciones en ninguna vista ([evidencia](docs/evidencias/hito3/)).
+
+## Dashboard y reportes
+
+- **Dashboard** (`#/dashboard`, Administrador, Supervisor y Gerencia): 6 indicadores con fórmula, numerador, denominador y variación frente al período anterior; lectura del período en texto; 4 gráficos (viajes por mes, costo por viaje, rendimiento por camión y viajes por estado), cada uno con descripción y tabla de datos; filtros por fecha, obra y vehículo. Endpoints `GET /dashboard/kpis` y `GET /dashboard/series`.
+- **Reportes** (`#/reportes`): *Detalle de viajes* (operativo), *Resumen gerencial mensual* (con gráfico y totales; Administrador y Gerencia) y *Combustible por vehículo* (parametrizable por fechas).
+- **Exportación** (`GET /reportes/{reporte}/export?formato=xlsx|pdf|csv`), con los filtros aplicados:
+  - Excel: encabezados, fechas y números con formato, y fila de totales con fórmulas.
+  - PDF: título, fecha de emisión, filtros, numeración y texto seleccionable.
+  - CSV: UTF-8 con BOM, separador `;` y coma decimal.
+  - Cada exportación queda en `auditoria` con usuario, formato y filtros.
+- **Impresión:** botón *Imprimir* con `@media print`, que deja fuera menús y botones.
 
 ## Integración de IA
 

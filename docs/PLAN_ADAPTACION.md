@@ -79,10 +79,10 @@ Dominio                                      →  /src/Domain    (entidades, enu
 - [x] Docker + compose + GitHub Actions (archivos listos; primera ejecución al publicar el repositorio en GitHub).
 
 ### Hito 4 — Semana 14: análisis, reportes y despliegue
-- [ ] 6 indicadores con fórmula y 4 o más gráficos con filtros y tabla accesible.
-- [ ] 3 reportes (operativo, gerencial y parametrizable) en XLSX/PDF/CSV y vista de impresión.
-- [ ] Plan de despliegue (10 apartados), Lighthouse/axe y prueba con NVDA.
-- [ ] Ensayo cronometrado.
+- [x] 6 indicadores con fórmula y 4 o más gráficos con filtros y tabla accesible.
+- [x] 3 reportes (operativo, gerencial y parametrizable) en XLSX/PDF/CSV y vista de impresión.
+- [x] Plan de despliegue (10 apartados), Lighthouse y axe. Pendiente: prueba con NVDA (manual, `docs/evidencias/hito4/prueba-teclado-nvda.md`).
+- [ ] Ensayo cronometrado (guion en `docs/evidencias/hito4/ensayo-presentacion.md`).
 
 ### Semana 15 — entrega y defensa
 

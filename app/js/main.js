@@ -42,6 +42,7 @@ let controlador = null; // AbortController de la vista activa
 function pintarShell() {
   const u = sesion.usuario;
   const app = $('#app');
+  document.documentElement.classList.toggle('con-sesion', !!u);
   if (!u) { app.className = ''; return; }
   app.className = 'tt-app';
   $('#tt-sidebar').innerHTML = html`
@@ -87,6 +88,7 @@ function vistaError(codigo) {
 }
 
 function vistaLogin(msg) {
+  document.documentElement.classList.remove('con-sesion');
   $('#app').className = '';
   $('#tt-sidebar').innerHTML = '';
   montar(html`<section class="tt-login" aria-labelledby="h-login">
