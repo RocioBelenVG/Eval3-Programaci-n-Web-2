@@ -1,0 +1,723 @@
+openapi: 3.0.3
+info:
+  title: TriTransportes API
+  version: 1.0.0
+  description: |
+    API REST de TriTransportes: gestión de viajes, combustible, flota, reportes e IA.
+    Todas las rutas, salvo `POST /auth/login`, requieren `Authorization: Bearer <JWT>`.
+    Los errores siguen siempre el esquema `Error`.
+servers:
+  - url: https://trivoxa.cl/TriTransportes/api/v1
+    description: Demostración (Hostinger)
+  - url: http://localhost:8080/api/v1
+    description: Local (Docker)
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Auth
+  - name: Viajes
+  - name: Combustible
+  - name: Mantenciones
+  - name: Flota
+  - name: Dashboard
+  - name: Reportes
+  - name: IA
+
+paths:
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Iniciar sesión y obtener un JWT
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email, maxLength: 120 }
+                password: { type: string, minLength: 8, maxLength: 128 }
+      responses:
+        '200':
+          description: Autenticado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token: { type: string }
+                  expires_in: { type: integer, example: 3600 }
+                  usuario: { $ref: '#/components/schemas/Usuario' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: Datos del usuario autenticado
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Usuario' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /viajes:
+    get:
+      tags: [Viajes]
+      summary: Listar viajes (el Conductor solo ve los suyos)
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/desde'
+        - $ref: '#/components/parameters/hasta'
+        - name: estado
+          in: query
+          schema: { $ref: '#/components/schemas/EstadoViaje' }
+        - name: vehiculo_id
+          in: query
+          schema: { type: integer }
+        - name: conductor_id
+          in: query
+          schema: { type: integer }
+        - name: obra_id
+          in: query
+          schema: { type: integer }
+        - name: sort
+          in: query
+          description: Campo de orden; un prefijo `-` indica orden descendente
+          schema:
+            type: string
+            enum: [fecha, -fecha, estado, -estado, vehiculo, -vehiculo]
+            default: -fecha
+      responses:
+        '200':
+          description: Página de viajes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Viaje' }
+                  meta: { $ref: '#/components/schemas/PageMeta' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [Viajes]
+      summary: Programar un viaje (Supervisor, Administrador)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ViajeInput' }
+      responses:
+        '201':
+          description: Creado
+          headers:
+            Location: { schema: { type: string } }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Viaje' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+  /viajes/{id}:
+    parameters:
+      - $ref: '#/components/parameters/id'
+    get:
+      tags: [Viajes]
+      summary: Obtener un viaje
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Viaje' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    put:
+      tags: [Viajes]
+      summary: Modificar un viaje programado (Supervisor, Administrador)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ViajeInput' }
+      responses:
+        '200':
+          description: Actualizado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Viaje' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+    delete:
+      tags: [Viajes]
+      summary: Eliminar un viaje programado (solo Administrador)
+      responses:
+        '204': { description: Eliminado }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /viajes/{id}/estado:
+    parameters:
+      - $ref: '#/components/parameters/id'
+    patch:
+      tags: [Viajes]
+      summary: Cambiar el estado del viaje (máquina de estados)
+      description: |
+        Transiciones válidas:
+        - `programado → en_ruta` (Conductor asignado, Supervisor)
+        - `en_ruta → completado` (Conductor asignado, Supervisor; exige `km_fin`)
+        - `programado | en_ruta → cancelado` (Supervisor; exige `motivo`)
+
+        Cualquier otra transición responde 409.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [estado]
+              properties:
+                estado: { $ref: '#/components/schemas/EstadoViaje' }
+                km_fin: { type: integer, minimum: 0 }
+                motivo: { type: string, maxLength: 255 }
+      responses:
+        '200':
+          description: Estado actualizado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Viaje' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+  /viajes/{id}/guias:
+    parameters:
+      - $ref: '#/components/parameters/id'
+    post:
+      tags: [Viajes]
+      summary: Emitir una guía de despacho (solo para un viaje completado)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [numero_guia, receptor]
+              properties:
+                numero_guia: { type: string, maxLength: 50 }
+                receptor: { type: string, maxLength: 150 }
+                rut_receptor: { type: string, pattern: '^[0-9]{7,8}-[0-9kK]$' }
+                observaciones: { type: string, maxLength: 1000 }
+      responses:
+        '201':
+          description: Guía emitida
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Guia' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+  /cargas:
+    get:
+      tags: [Combustible]
+      summary: Listar cargas de combustible
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+        - $ref: '#/components/parameters/desde'
+        - $ref: '#/components/parameters/hasta'
+        - name: vehiculo_id
+          in: query
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Página de cargas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Carga' }
+                  meta: { $ref: '#/components/schemas/PageMeta' }
+    post:
+      tags: [Combustible]
+      summary: Registrar una carga (Conductor, Supervisor)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CargaInput' }
+      responses:
+        '201':
+          description: Registrada
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Carga' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+  /vehiculos:
+    get:
+      tags: [Flota]
+      summary: Listar vehículos
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+        - $ref: '#/components/parameters/q'
+      responses:
+        '200':
+          description: Página de vehículos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Vehiculo' }
+                  meta: { $ref: '#/components/schemas/PageMeta' }
+
+  /vehiculos/{id}/rendimiento:
+    parameters:
+      - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/desde'
+      - $ref: '#/components/parameters/hasta'
+    get:
+      tags: [Flota]
+      summary: Rendimiento mensual (km/L) y costo de un vehículo
+      responses:
+        '200':
+          description: Serie mensual
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    mes: { type: string, example: '2026-03' }
+                    km: { type: integer }
+                    litros: { type: number }
+                    km_por_litro: { type: number }
+                    costo: { type: number }
+
+  /mantenciones:
+    get:
+      tags: [Mantenciones]
+      summary: Listar mantenciones
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+        - name: estado
+          in: query
+          schema: { type: string, enum: [pendiente, en_proceso, completada] }
+      responses:
+        '200': { description: Página de mantenciones }
+    post:
+      tags: [Mantenciones]
+      summary: Registrar una mantención (Supervisor)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [equipo_id, tipo, fecha]
+              properties:
+                equipo_id: { type: integer }
+                tipo: { type: string, enum: [preventiva, correctiva] }
+                fecha: { type: string, format: date }
+                descripcion: { type: string, maxLength: 2000 }
+                costo_total: { type: number, minimum: 0 }
+      responses:
+        '201': { description: Registrada }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+  /mantenciones/{id}/estado:
+    parameters:
+      - $ref: '#/components/parameters/id'
+    patch:
+      tags: [Mantenciones]
+      summary: Avanzar el estado (pendiente → en_proceso → completada)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [estado]
+              properties:
+                estado: { type: string, enum: [en_proceso, completada] }
+      responses:
+        '200': { description: Actualizada }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /dashboard/kpis:
+    get:
+      tags: [Dashboard]
+      summary: Indicadores agregados del período
+      parameters:
+        - $ref: '#/components/parameters/desde'
+        - $ref: '#/components/parameters/hasta'
+        - name: obra_id
+          in: query
+          schema: { type: integer }
+        - name: vehiculo_id
+          in: query
+          schema: { type: integer }
+      responses:
+        '200':
+          description: KPIs
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Kpis' }
+
+  /dashboard/series:
+    get:
+      tags: [Dashboard]
+      summary: Series para los gráficos (viajes por mes, consumo, costo, estados)
+      parameters:
+        - $ref: '#/components/parameters/desde'
+        - $ref: '#/components/parameters/hasta'
+        - name: serie
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [viajes_mes, rendimiento_vehiculo, costo_combustible_mes, viajes_por_estado]
+      responses:
+        '200':
+          description: Serie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  titulo: { type: string }
+                  descripcion: { type: string }
+                  labels: { type: array, items: { type: string } }
+                  datasets:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        label: { type: string }
+                        data: { type: array, items: { type: number } }
+
+  /reportes/{reporte}:
+    parameters:
+      - name: reporte
+        in: path
+        required: true
+        schema: { type: string, enum: [operativo-viajes, gerencial-mensual, combustible-periodo] }
+      - $ref: '#/components/parameters/desde'
+      - $ref: '#/components/parameters/hasta'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/perPage'
+    get:
+      tags: [Reportes]
+      summary: Datos paginados y filtrables del reporte (para la interfaz)
+      responses:
+        '200': { description: Página del reporte con totales }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /reportes/{reporte}/export:
+    parameters:
+      - name: reporte
+        in: path
+        required: true
+        schema: { type: string, enum: [operativo-viajes, gerencial-mensual, combustible-periodo] }
+      - name: formato
+        in: query
+        required: true
+        schema: { type: string, enum: [xlsx, pdf, csv] }
+      - $ref: '#/components/parameters/desde'
+      - $ref: '#/components/parameters/hasta'
+    get:
+      tags: [Reportes]
+      summary: Exportar el reporte con los filtros aplicados (queda registrado en auditoría)
+      description: El CSV usa UTF-8 con BOM y separador `;` (compatible con Excel en es-CL).
+      responses:
+        '200':
+          description: Archivo
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet: {}
+            application/pdf: {}
+            text/csv: {}
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /ia/resumen:
+    post:
+      tags: [IA]
+      summary: Resumen gerencial en lenguaje natural de los KPIs del período (Gerencia, Supervisor)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [desde, hasta]
+              properties:
+                desde: { type: string, format: date }
+                hasta: { type: string, format: date }
+                enfoque:
+                  type: string
+                  enum: [general, combustible, flota]
+                  default: general
+      responses:
+        '200':
+          description: Resumen generado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resumen: { type: string }
+                  recomendaciones: { type: array, items: { type: string } }
+                  modelo: { type: string, example: llama-3.3-70b-versatile }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '502': { $ref: '#/components/responses/BadGateway' }
+        '504': { $ref: '#/components/responses/GatewayTimeout' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    id:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer, minimum: 1 }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: per_page
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 100, default: 25 }
+    q:
+      name: q
+      in: query
+      description: Búsqueda de texto libre
+      schema: { type: string, maxLength: 100 }
+    desde:
+      name: desde
+      in: query
+      schema: { type: string, format: date }
+    hasta:
+      name: hasta
+      in: query
+      schema: { type: string, format: date }
+
+  responses:
+    Unauthorized:
+      description: Token ausente, inválido o expirado
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    Forbidden:
+      description: El rol no tiene permiso
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    NotFound:
+      description: No existe o no pertenece al usuario o la empresa
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    Conflict:
+      description: Transición de estado no permitida o conflicto de negocio
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    ValidationError:
+      description: Datos inválidos
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          example:
+            error:
+              code: VALIDATION_ERROR
+              message: Los datos enviados no son válidos.
+              details:
+                - field: km_fin
+                  message: El kilometraje final debe ser mayor o igual al inicial.
+    TooManyRequests:
+      description: Límite de tasa excedido
+      headers:
+        Retry-After: { schema: { type: integer } }
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadGateway:
+      description: El servicio de IA externo respondió con error
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    GatewayTimeout:
+      description: El servicio de IA externo no respondió a tiempo
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+              example: TRANSICION_INVALIDA
+            message:
+              type: string
+              example: No se puede pasar de 'completado' a 'en_ruta'.
+            details:
+              type: array
+              items:
+                type: object
+                properties:
+                  field: { type: string }
+                  message: { type: string }
+            request_id: { type: string }
+
+    PageMeta:
+      type: object
+      properties:
+        page: { type: integer }
+        per_page: { type: integer }
+        total: { type: integer }
+        total_pages: { type: integer }
+
+    Usuario:
+      type: object
+      properties:
+        id: { type: integer }
+        nombre: { type: string }
+        email: { type: string, format: email }
+        rol: { type: string, enum: [Administrador, Supervisor, Conductor, Gerencia] }
+
+    EstadoViaje:
+      type: string
+      enum: [programado, en_ruta, completado, cancelado]
+
+    ViajeInput:
+      type: object
+      required: [vehiculo_id, conductor_id, fecha, origen, destino]
+      properties:
+        vehiculo_id: { type: integer, minimum: 1 }
+        conductor_id: { type: integer, minimum: 1 }
+        obra_id: { type: integer, minimum: 1, nullable: true }
+        fecha: { type: string, format: date }
+        hora_salida: { type: string, pattern: '^[0-2][0-9]:[0-5][0-9]$' }
+        origen: { type: string, minLength: 2, maxLength: 200 }
+        destino: { type: string, minLength: 2, maxLength: 200 }
+        km_inicio: { type: integer, minimum: 0 }
+        cantidad: { type: number, minimum: 0 }
+        unidad: { type: string, enum: [m3, ton, viaje] }
+        observaciones: { type: string, maxLength: 1000 }
+
+    Viaje:
+      allOf:
+        - $ref: '#/components/schemas/ViajeInput'
+        - type: object
+          properties:
+            id: { type: integer }
+            estado: { $ref: '#/components/schemas/EstadoViaje' }
+            km_fin: { type: integer }
+            hora_llegada: { type: string }
+            vehiculo: { type: object, properties: { id: { type: integer }, patente: { type: string } } }
+            conductor: { type: object, properties: { id: { type: integer }, nombre: { type: string } } }
+            obra: { type: object, nullable: true, properties: { id: { type: integer }, nombre: { type: string } } }
+            transiciones_permitidas:
+              type: array
+              items: { $ref: '#/components/schemas/EstadoViaje' }
+            created_at: { type: string, format: date-time }
+            updated_at: { type: string, format: date-time }
+
+    Guia:
+      type: object
+      properties:
+        id: { type: integer }
+        viaje_id: { type: integer }
+        numero_guia: { type: string }
+        fecha: { type: string, format: date }
+        receptor: { type: string }
+
+    CargaInput:
+      type: object
+      required: [tipo_unidad, fecha, litros]
+      properties:
+        tipo_unidad: { type: string, enum: [vehiculo, equipo] }
+        vehiculo_id: { type: integer, nullable: true }
+        equipo_id: { type: integer, nullable: true }
+        fecha: { type: string, format: date }
+        litros: { type: number, exclusiveMinimum: true, minimum: 0, maximum: 600 }
+        precio_litro: { type: number, exclusiveMinimum: true, minimum: 0 }
+        odometro: { type: integer, minimum: 0 }
+        horometro: { type: number, minimum: 0 }
+        proveedor_id: { type: integer, nullable: true }
+
+    Carga:
+      allOf:
+        - $ref: '#/components/schemas/CargaInput'
+        - type: object
+          properties:
+            id: { type: integer }
+            costo_total: { type: number }
+
+    Vehiculo:
+      type: object
+      properties:
+        id: { type: integer }
+        patente: { type: string }
+        marca: { type: string }
+        modelo: { type: string }
+        anio: { type: integer }
+        odometro: { type: integer }
+        categoria: { type: string }
+        activo: { type: boolean }
+
+    Kpis:
+      type: object
+      description: Cada indicador incluye su valor, su fórmula y la pregunta de negocio
+      properties:
+        rendimiento_km_l: { $ref: '#/components/schemas/Kpi' }
+        costo_combustible_por_viaje: { $ref: '#/components/schemas/Kpi' }
+        cumplimiento_viajes: { $ref: '#/components/schemas/Kpi' }
+        disponibilidad_flota: { $ref: '#/components/schemas/Kpi' }
+        mtbf_horas: { $ref: '#/components/schemas/Kpi' }
+        tasa_cancelacion: { $ref: '#/components/schemas/Kpi' }
+
+    Kpi:
+      type: object
+      properties:
+        valor: { type: number }
+        unidad: { type: string }
+        formula: { type: string }
+        variacion_vs_periodo_anterior: { type: number, nullable: true }
