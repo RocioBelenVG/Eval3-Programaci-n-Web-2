@@ -18,6 +18,27 @@ final class FlotaRepository extends Repository
         return $this->paginate('v.id, v.patente, v.marca, v.modelo, v.anio, v.odometro, cv.nombre AS categoria, v.activo', $where, $p, 'v.patente ASC', $page, $perPage);
     }
 
+    /** Catálogos para los formularios (solo registros activos de la empresa). */
+    public function conductores(int $empresaId): array
+    {
+        return $this->all(
+            "SELECT c.id, CONCAT(t.nombre, ' ', t.apellido) AS nombre, c.licencia_tipo, c.licencia_vence
+             FROM conductores c JOIN trabajadores t ON t.id = c.trabajador_id
+             WHERE t.empresa_id = ? AND c.activo = 1 ORDER BY t.nombre, t.apellido",
+            [$empresaId]
+        );
+    }
+
+    public function obras(int $empresaId): array
+    {
+        return $this->all("SELECT id, nombre, codigo, estado FROM obras WHERE empresa_id = ? AND activo = 1 ORDER BY nombre", [$empresaId]);
+    }
+
+    public function equipos(int $empresaId): array
+    {
+        return $this->all('SELECT id, codigo, nombre, horometro FROM equipos WHERE empresa_id = ? AND activo = 1 ORDER BY codigo', [$empresaId]);
+    }
+
     public function vehiculo(int $empresaId, int $id): ?array
     {
         return $this->one('SELECT id, patente, odometro, activo FROM vehiculos WHERE empresa_id = ? AND id = ?', [$empresaId, $id]);

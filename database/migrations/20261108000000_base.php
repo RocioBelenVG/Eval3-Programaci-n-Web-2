@@ -13,14 +13,10 @@ use Phinx\Migration\AbstractMigration;
  */
 final class Base extends AbstractMigration
 {
+    // INSTALL.sql = schema.sql + módulos m01..m06 + catálogos y empresas de demostración;
+    // m07 agrega firma y GPS. Los 12 meses de operación los genera después seed_masivo.php.
     private const ARCHIVOS = [
-        'schema.sql',
-        'm01_operacional.sql',
-        'm02_transporte.sql',
-        'm03_aridos.sql',
-        'm04_contratos.sql',
-        'm05_documentos.sql',
-        'm06_seguridad.sql',
+        'INSTALL.sql',
         'm07_firma_gps.sql',
     ];
 

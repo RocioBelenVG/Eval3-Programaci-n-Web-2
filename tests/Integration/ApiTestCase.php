@@ -24,6 +24,7 @@ abstract class ApiTestCase extends TestCase
 
     protected static ?Database $db = null;
     protected Kernel $kernel;
+    protected \TriTransportes\Container $container;
     protected string $password;
     /** @var array<string, array{id: int, email: string, conductor_id: ?int}> */
     protected array $usuarios = [];
@@ -37,7 +38,8 @@ abstract class ApiTestCase extends TestCase
         }
         self::$db ??= Database::connect(DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS);
         self::$db->pdo->beginTransaction();
-        $this->kernel = new Kernel(App::container(self::$db));
+        $this->container = App::container(self::$db);
+        $this->kernel = new Kernel($this->container);
         $this->password = bin2hex(random_bytes(8));
         $this->crearFixtures();
     }

@@ -35,6 +35,25 @@ final class FlotaController
         return Response::json($res);
     }
 
+    public function conductores(Request $r): Response
+    {
+        return Response::json(array_map(fn ($c) => [
+            'id' => (int) $c['id'], 'nombre' => $c['nombre'], 'licencia_tipo' => $c['licencia_tipo'], 'licencia_vence' => $c['licencia_vence'],
+        ], $this->flota->conductores($r->user()->empresaId)));
+    }
+
+    public function obras(Request $r): Response
+    {
+        return Response::json(array_map(fn ($o) => ['id' => (int) $o['id'], 'nombre' => $o['nombre'], 'codigo' => $o['codigo'], 'estado' => $o['estado']],
+            $this->flota->obras($r->user()->empresaId)));
+    }
+
+    public function equipos(Request $r): Response
+    {
+        return Response::json(array_map(fn ($e) => ['id' => (int) $e['id'], 'codigo' => $e['codigo'], 'nombre' => $e['nombre'], 'horometro' => $e['horometro'] !== null ? (float) $e['horometro'] : null],
+            $this->flota->equipos($r->user()->empresaId)));
+    }
+
     public function rendimiento(Request $r): Response
     {
         $u = $r->user();

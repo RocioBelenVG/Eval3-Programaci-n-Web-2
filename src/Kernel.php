@@ -5,6 +5,7 @@ namespace TriTransportes;
 
 use TriTransportes\Controller\AuthController;
 use TriTransportes\Controller\FlotaController;
+use TriTransportes\Controller\IaController;
 use TriTransportes\Controller\ViajeController;
 use TriTransportes\Domain\Rol;
 use TriTransportes\Exception\ApiException;
@@ -54,6 +55,12 @@ final class Kernel
 
         $r->add('GET', '/vehiculos', [FlotaController::class, 'vehiculos']);
         $r->add('GET', '/vehiculos/{id}/rendimiento', [FlotaController::class, 'rendimiento'], [$A, $S, $G]);
+
+        $r->add('GET', '/conductores', [FlotaController::class, 'conductores'], [$A, $S]);
+        $r->add('GET', '/obras', [FlotaController::class, 'obras'], [$A, $S, $G]);
+        $r->add('GET', '/equipos', [FlotaController::class, 'equipos']);
+
+        $r->add('POST', '/ia/resumen', [IaController::class, 'resumen'], [$A, $S, $G]);
 
         $r->add('GET', '/mantenciones', [FlotaController::class, 'mantencionesIndex'], [$A, $S, $G]);
         $r->add('POST', '/mantenciones', [FlotaController::class, 'mantencionesStore'], [$A, $S]);
