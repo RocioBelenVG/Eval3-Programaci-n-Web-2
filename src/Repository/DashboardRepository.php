@@ -46,7 +46,7 @@ final class DashboardRepository extends Repository
             [$empresaId, $desde, $hastaReal, ...$pc]
         );
         $equipos = (int) $this->scalar('SELECT COUNT(*) FROM equipos WHERE empresa_id = ? AND activo = 1', [$empresaId]);
-        $dias = (int) ((strtotime($hastaReal) - strtotime($desde)) / 86400) + 1;
+        $dias = (new \DateTimeImmutable($desde))->diff(new \DateTimeImmutable($hastaReal))->days + 1;
         $ini = "$desde 00:00:00";
         $fin = "$hastaReal 23:59:59";
         $det = $this->one(

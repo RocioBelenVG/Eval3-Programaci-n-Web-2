@@ -28,23 +28,30 @@ final class DashboardService
         if ($hasta < $desde) {
             throw ApiException::field('hasta', 'La fecha final debe ser igual o posterior a la inicial.');
         }
-        if ((strtotime($hasta) - strtotime($desde)) / 86400 + 1 > self::MAX_DIAS) {
+        if (self::dias($desde, $hasta) > self::MAX_DIAS) {
             throw ApiException::field('desde', 'El período no puede superar dos años.');
         }
         return [$desde, $hasta];
+    }
+
+    /** Días calendario entre dos fechas, ambas incluidas (sin el error de dividir segundos por 86.400 en un cambio de horario). */
+    public static function dias(string $desde, string $hasta): int
+    {
+        return (new \DateTimeImmutable($desde))->diff(new \DateTimeImmutable($hasta))->days + 1;
     }
 
     public function kpis(AuthUser $u, array $f): array
     {
         [$desde, $hasta] = self::rango($f);
         $act = $this->calcular($this->repo->componentes($u->empresaId, $desde, $hasta, $f));
-        $dias = (int) ((strtotime($hasta) - strtotime($desde)) / 86400) + 1;
+        $dias = self::dias($desde, $hasta);
         $antHasta = date('Y-m-d', strtotime("$desde -1 day"));
         $antDesde = date('Y-m-d', strtotime("$antHasta -" . ($dias - 1) . ' days'));
         $ant = $this->calcular($this->repo->componentes($u->empresaId, $antDesde, $antHasta, $f));
 
+        $sinHistoria = $this->repo->componentes($u->empresaId, $antDesde, $antHasta, $f)['viajes'] === 0;
         foreach ($act as $k => &$kpi) {
-            $a = $ant[$k]['valor'];
+            $a = $sinHistoria ? null : $ant[$k]['valor']; // sin viajes en el período anterior no hay con qué comparar
             $kpi['valor_periodo_anterior'] = $a;
             $kpi['variacion_vs_periodo_anterior'] = ($a === null || $kpi['valor'] === null || $a == 0) ? null
                 : round(($kpi['valor'] - $a) / abs($a) * 100, 1);
