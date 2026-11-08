@@ -86,7 +86,6 @@ export async function cargas({ montar, rol, signal }) {
         <div class="tt-field" data-para="equipo" hidden><label class="tt-label" for="n-hor">Horómetro (h)</label>
           <input class="tt-input" id="n-hor" name="horometro" type="number" inputmode="decimal" min="0" step="0.1" disabled></div>`,
       alAceptar: async (form) => {
-        if (!validarFormulario(form)()) throw false;
         const fd = new FormData(form);
         const n = (k) => (fd.get(k) ? Number(fd.get(k)) : null);
         const r = await post('cargas', {
@@ -167,7 +166,6 @@ export async function mantenciones({ montar, rol, signal }) {
         <div class="tt-field"><label class="tt-label" for="r-desc">Descripción</label>
           <textarea class="tt-textarea" id="r-desc" name="descripcion" maxlength="2000" rows="3"></textarea></div>`,
       alAceptar: async (form) => {
-        if (!validarFormulario(form)()) throw false;
         const fd = new FormData(form);
         await post('mantenciones', {
           equipo_id: Number(fd.get('equipo_id')), tipo: fd.get('tipo'), fecha: fd.get('fecha'),

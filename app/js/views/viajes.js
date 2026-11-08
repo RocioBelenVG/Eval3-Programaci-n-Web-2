@@ -153,7 +153,7 @@ export async function detalle({ params: [id], montar, rol, signal }) {
     let cuerpo = html`<p>El viaje pasará de <strong>${ESTADOS[v.estado]}</strong> a <strong>${ESTADOS[t]}</strong>.</p>`;
     if (t === 'completado') {
       cuerpo = html`${cuerpo}<div class="tt-field"><label class="tt-label" for="m-km">Kilometraje final <span class="tt-req" aria-hidden="true">*</span></label>
-        <input class="tt-input" id="m-km" name="km_fin" type="number" inputmode="numeric" required min="${v.km_inicio ?? 0}" step="1">
+        <input class="tt-input" id="m-km" name="km_fin" type="number" inputmode="numeric" required min="${v.km_inicio ?? 0}" step="1" aria-describedby="m-km-ayuda">
         <p class="tt-hint" id="m-km-ayuda">Debe ser mayor o igual al inicial (${fmt.n(v.km_inicio ?? 0)} km).</p></div>`;
     }
     if (t === 'cancelado') {
@@ -163,9 +163,6 @@ export async function detalle({ params: [id], montar, rol, signal }) {
     modal({
       titulo: ACCIONES[t].texto, cuerpo, confirmar: ACCIONES[t].texto, peligro: t === 'cancelado',
       alAceptar: async (f) => {
-        if (f.km_fin) f.km_fin.setAttribute('aria-describedby', 'm-km-ayuda');
-        const valido = validarFormulario(f);
-        if (!valido()) throw false;
         await patch(`viajes/${v.id}/estado`, { estado: t, km_fin: f.km_fin ? Number(f.km_fin.value) : undefined, motivo: f.motivo?.value.trim() || undefined });
         recargar(`Viaje #${v.id}: ${ESTADOS[t].toLowerCase()}.`);
       },
@@ -189,7 +186,6 @@ export async function detalle({ params: [id], montar, rol, signal }) {
         <input class="tt-input" id="g-rut" name="rut_receptor" maxlength="10" pattern="[0-9]{7,8}-[0-9kK]" data-patron="Use el formato 12345678-9, sin puntos." aria-describedby="g-rut-ayuda">
         <p class="tt-hint" id="g-rut-ayuda">Sin puntos y con guion, por ejemplo 12345678-5.</p></div>`,
     alAceptar: async (f) => {
-      if (!validarFormulario(f)()) throw false;
       const g = await post(`viajes/${v.id}/guias`, { numero_guia: f.numero_guia.value.trim(), receptor: f.receptor.value.trim(), rut_receptor: f.rut_receptor.value.trim() || undefined });
       toast(`Guía ${g.numero_guia} emitida.`);
     },

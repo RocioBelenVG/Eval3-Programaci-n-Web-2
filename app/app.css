@@ -22,6 +22,8 @@ h1:focus-visible { outline: 3px solid var(--tt-focus); outline-offset: 4px; }
 .tt-login .tt-card { width: min(26rem, 100%); }
 .tt-brand--lg { font-size: var(--tt-fs-xl); margin-bottom: var(--tt-space-4); }
 
+.tt-breadcrumb a { display: inline-block; min-height: 24px; padding: 2px 0; }
+
 /* Encabezado de página y acciones */
 .tt-page-head h1 { margin: 0; }
 .tt-acciones { display: flex; flex-wrap: wrap; gap: var(--tt-space-2); }
@@ -45,6 +47,12 @@ h1:focus-visible { outline: 3px solid var(--tt-focus); outline-offset: 4px; }
 /* Tablas: enlaces de fila con objetivo táctil suficiente */
 .tt-table a { display: inline-flex; align-items: center; min-height: 24px; font-weight: var(--tt-fw-semibold); }
 .tt-table td .tt-btn { white-space: nowrap; }
+.tt-table td[data-label="Fecha"] { white-space: nowrap; }
+@media (max-width: 47.99em) {
+  .tt-table--stack caption { display: block; width: 100%; }
+  .tt-table--stack td { text-align: right; }
+  .tt-table--stack td::before { text-align: left; }
+}
 
 /* Toasts */
 .tt-toasts { position: fixed; right: var(--tt-space-4); bottom: var(--tt-space-4); z-index: 100; display: grid; gap: var(--tt-space-2); width: min(24rem, calc(100% - 2rem)); }

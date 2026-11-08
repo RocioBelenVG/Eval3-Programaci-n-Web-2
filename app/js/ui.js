@@ -63,7 +63,8 @@ export function toast(msg, tipo = 'success') {
 // ── Formularios ─────────────────────────────────────────────────────────────
 /** Muestra un error bajo el campo, lo vincula con aria-describedby y marca aria-invalid. */
 export function errorCampo(form, nombre, mensaje) {
-  const campo = form.elements[nombre];
+  let campo = form.elements[nombre];
+  if (typeof RadioNodeList !== 'undefined' && campo instanceof RadioNodeList) campo = campo[0]; // grupo de radios
   if (!campo) return false;
   const id = `err-${campo.id || nombre}`;
   let p = form.querySelector(`#${CSS.escape(id)}`);
@@ -93,7 +94,7 @@ export function mensajeNativo(c) {
   const v = c.validity;
   if (v.valid) return '';
   const etiqueta = c.labels?.[0]?.textContent.replace('*', '').trim() || 'Este campo';
-  if (v.valueMissing) return `${etiqueta} es obligatorio.`;
+  if (v.valueMissing) return `Complete el campo «${etiqueta}».`;
   if (v.typeMismatch && c.type === 'email') return 'Ingrese un correo válido, por ejemplo nombre@empresa.cl.';
   if (v.badInput) return `${etiqueta}: ingrese un número válido.`;
   if (v.rangeUnderflow) return `${etiqueta} debe ser mayor o igual a ${c.min}.`;
@@ -186,10 +187,12 @@ export function modal({ titulo, cuerpo, confirmar = 'Confirmar', peligro = false
   const volver = document.activeElement;
   document.body.append(d);
   const form = d.querySelector('form');
+  const validar = validarFormulario(form); // errores propios, accesibles, en lugar del globo del navegador
   d.querySelector('[value="cancelar"]').addEventListener('click', () => d.close());
   d.addEventListener('close', () => { d.remove(); volver?.focus?.(); });
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    if (!validar()) return;
     const boton = form.querySelector('[type="submit"]');
     try {
       await ocupado(boton, alAceptar(form));
