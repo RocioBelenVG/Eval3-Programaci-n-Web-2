@@ -11,6 +11,8 @@ Es el proyecto integrador de la **Evaluación 3 de Lenguaje de Programación Web
 |---|---|
 | Informe técnico (PDF) | `Informe_Tecnico_TriTransportes.pdf`, en la carpeta de entrega: las 11 secciones de la pauta, matriz de cumplimiento y rúbrica autoevaluada |
 | [Evidencia del Hito 4](docs/evidencias/hito4/) | Lighthouse, axe, tiempos del dashboard (RNF02), archivos exportados de los 3 reportes y protocolos de NVDA y del ensayo |
+| [06 · Manual de usuario](docs/06_manual_usuario.md) | Uso breve por rol: Conductor, Supervisor, Gerencia y Administrador |
+| [Diagramas exportados](docs/diagramas/) | Capas, componentes, entidad–relación, estados del viaje y despliegue en SVG (fuentes Mermaid en los documentos 02 y 03) |
 | [05 · Plan de despliegue](docs/05_plan_despliegue.md) | Los 10 apartados de la pauta: entornos, infraestructura, pasos, secretos, reversión, respaldo, monitoreo, seguridad, costos y lista de verificación |
 | [Evidencia del Hito 3](docs/evidencias/hito3/) | Auditoría axe-core de la interfaz, pruebas de IA y verificación de contenedores |
 | [Evidencia del Hito 2](docs/evidencias/hito2/) | Salida de PHPUnit (testdox y JUnit), estado de las migraciones, verificación de la base y prueba de humo de la API |
