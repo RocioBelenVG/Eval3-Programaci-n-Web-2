@@ -1,0 +1,726 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maquetas y guía de estilos — TriTransportes</title>
+<meta name="description" content="Maquetas de las pantallas principales por rol y componentes del sistema de diseño de TriTransportes.">
+<link rel="stylesheet" href="../../assets/css/tt-design.css">
+<style>
+  /* Estilos SOLO de la página de maquetas (marcos de pantalla y navegación del documento) */
+  .mq-header { background: var(--tt-navy-900); color: var(--tt-white); padding: var(--tt-space-5) var(--tt-space-4); }
+  .mq-header p { color: var(--tt-slate-300); max-width: 60rem; margin: 0; }
+  .mq-header h1 { margin-bottom: var(--tt-space-2); }
+  .mq-toc { position: sticky; top: 0; z-index: 60; background: var(--tt-white); border-bottom: 1px solid var(--tt-divider); overflow-x: auto; }
+  .mq-toc ul { display: flex; gap: var(--tt-space-1); list-style: none; margin: 0; padding: var(--tt-space-2) var(--tt-space-4); }
+  .mq-toc a { display: inline-flex; align-items: center; min-height: var(--tt-touch); padding: 0 var(--tt-space-3); border-radius: var(--tt-radius-sm); color: var(--tt-navy-900); text-decoration: none; font-weight: 600; white-space: nowrap; }
+  .mq-toc a:hover { background: var(--tt-slate-100); }
+  .mq-body { padding: var(--tt-space-4); max-width: 90rem; margin: 0 auto; }
+  .mq-role { margin: var(--tt-space-7) 0 var(--tt-space-4); padding-bottom: var(--tt-space-2); border-bottom: 3px solid var(--tt-amber-500); scroll-margin-top: 70px; }
+  .mq-screen { margin-bottom: var(--tt-space-6); scroll-margin-top: 70px; }
+  .mq-screen > h3 { font-size: var(--tt-fs-lg); }
+  .mq-note { font-size: var(--tt-fs-sm); color: var(--tt-text-2); max-width: 60rem; }
+  .mq-frame { border: 1px solid var(--tt-slate-300); border-radius: var(--tt-radius-lg); overflow: hidden; background: var(--tt-bg); box-shadow: var(--tt-shadow-2); }
+  .mq-frame__bar { display: flex; gap: 6px; align-items: center; padding: 8px 12px; background: var(--tt-slate-200); font-size: var(--tt-fs-xs); color: var(--tt-navy-700); }
+  .mq-frame__bar span { width: 10px; height: 10px; border-radius: 50%; background: var(--tt-slate-500); }
+  .mq-frame__bar code { margin-left: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mq-phone { max-width: 390px; margin: 0 auto; border-radius: 28px; border: 8px solid var(--tt-navy-900); }
+  .mq-frame .tt-app { min-height: auto; }
+  .mq-frame .tt-sidebar { position: static; height: auto; }
+  .mq-h1 { font-size: var(--tt-fs-2xl); margin: 0; }
+  .mq-swatches { display: grid; gap: var(--tt-space-3); grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); }
+  .mq-swatch { border: 1px solid var(--tt-divider); border-radius: var(--tt-radius-md); overflow: hidden; background: var(--tt-white); font-size: var(--tt-fs-sm); }
+  .mq-swatch div { height: 56px; }
+  .mq-swatch p { margin: 0; padding: var(--tt-space-2) var(--tt-space-3); }
+  .mq-row { display: flex; flex-wrap: wrap; gap: var(--tt-space-3); align-items: center; margin-bottom: var(--tt-space-4); }
+  .mq-chart { width: 100%; height: auto; display: block; }
+  .mq-chart text { font: 12px var(--tt-font); fill: var(--tt-navy-700); }
+  .tt-fake-hover { background: var(--tt-navy-700) !important; }
+  .tt-fake-focus { outline: 3px solid var(--tt-focus); outline-offset: 2px; }
+  .mq-login { min-height: 520px; display: grid; place-items: center; padding: var(--tt-space-5) var(--tt-space-4);
+    background: radial-gradient(ellipse 70% 60% at 20% 10%, rgba(245,158,11,.18), transparent 60%), linear-gradient(150deg, #0f172a, #1e293b); }
+  .mq-login .tt-card { width: min(26rem, 100%); }
+  .mq-login .tt-brand { font-size: 1.75rem; display: block; text-align: center; color: var(--tt-white); }
+  .mq-login .tt-brand b { color: var(--tt-amber-500); }
+  .mq-login .tagline { text-align: center; color: var(--tt-slate-300); letter-spacing: .2em; text-transform: uppercase; font-size: var(--tt-fs-xs); margin-bottom: var(--tt-space-4); }
+  .mq-ai { border-left: 4px solid var(--tt-amber-500); }
+  @media print { .mq-toc, .mq-header, .mq-role, .mq-note, .mq-screen > h3 { display: none; } .mq-frame { border: 0; box-shadow: none; } }
+</style>
+</head>
+<body>
+<a class="tt-skip" href="#contenido">Saltar al contenido</a>
+
+<header class="mq-header tt-on-dark">
+  <h1><span class="tt-brand">TRI<b>TRANSPORTES</b></span> · Maquetas y guía de estilos</h1>
+  <p>Pantallas principales por rol (Hito 1). Todas usan el sistema de diseño real <code>assets/css/tt-design.css</code>.
+     Cambie el ancho de la ventana (360 → 1440 px) para ver el comportamiento responsive.</p>
+</header>
+
+<nav class="mq-toc" aria-label="Secciones de las maquetas">
+  <ul>
+    <li><a href="#estilos">Guía de estilos</a></li>
+    <li><a href="#componentes">Componentes</a></li>
+    <li><a href="#todos">Acceso y errores</a></li>
+    <li><a href="#supervisor">Supervisor</a></li>
+    <li><a href="#conductor">Conductor</a></li>
+    <li><a href="#gerencia">Gerencia</a></li>
+    <li><a href="#administrador">Administrador</a></li>
+  </ul>
+</nav>
+
+<main id="contenido" class="mq-body">
+
+<!-- ════════════════════════════ GUÍA DE ESTILOS ════════════════════════════ -->
+<h2 id="estilos" class="mq-role">Guía de estilos</h2>
+
+<section class="mq-screen" aria-labelledby="h-paleta">
+  <h3 id="h-paleta">Paleta (con contraste sobre blanco o su par)</h3>
+  <div class="mq-swatches">
+    <div class="mq-swatch"><div style="background:#0f172a"></div><p><strong>Navy 900</strong><br>#0f172a · 17,85:1</p></div>
+    <div class="mq-swatch"><div style="background:#334155"></div><p><strong>Navy 700</strong><br>#334155 · 10,35:1</p></div>
+    <div class="mq-swatch"><div style="background:#f59e0b"></div><p><strong>Ámbar 500</strong><br>#f59e0b · solo relleno (8,31:1 con navy)</p></div>
+    <div class="mq-swatch"><div style="background:#b45309"></div><p><strong>Ámbar 700</strong><br>#b45309 · 5,02:1</p></div>
+    <div class="mq-swatch"><div style="background:#475569"></div><p><strong>Texto 2</strong><br>#475569 · 7,58:1</p></div>
+    <div class="mq-swatch"><div style="background:#64748b"></div><p><strong>Borde control</strong><br>#64748b · 4,76:1</p></div>
+    <div class="mq-swatch"><div style="background:#2563eb"></div><p><strong>Foco</strong><br>#2563eb · 5,17:1</p></div>
+    <div class="mq-swatch"><div style="background:#15803d"></div><p><strong>Éxito</strong><br>#15803d · 5,02:1</p></div>
+    <div class="mq-swatch"><div style="background:#b91c1c"></div><p><strong>Peligro</strong><br>#b91c1c · 6,47:1</p></div>
+    <div class="mq-swatch"><div style="background:#1d4ed8"></div><p><strong>Información</strong><br>#1d4ed8 · 6,70:1</p></div>
+  </div>
+</section>
+
+<section class="mq-screen" aria-labelledby="h-tipo">
+  <h3 id="h-tipo">Tipografía (pila del sistema, escala en rem)</h3>
+  <div class="tt-card">
+    <p style="font-size:var(--tt-fs-3xl);font-weight:700;margin:0">36 · 12,4 km/L</p>
+    <p style="font-size:var(--tt-fs-2xl);font-weight:700;margin:0">28 · Título de página (h1)</p>
+    <p style="font-size:var(--tt-fs-xl);font-weight:700;margin:0">22 · Sección (h2)</p>
+    <p style="font-size:var(--tt-fs-lg);font-weight:600;margin:0">18 · Título de tarjeta</p>
+    <p style="margin:0">16 · Cuerpo e inputs: el viaje quedó programado para mañana a las 07:30.</p>
+    <p style="font-size:var(--tt-fs-sm);color:var(--tt-text-2);margin:0">14 · Texto secundario y ayudas</p>
+    <p style="font-size:var(--tt-fs-xs);text-transform:uppercase;letter-spacing:.04em;margin:0">13 · Encabezado de tabla</p>
+  </div>
+</section>
+
+<section class="mq-screen" aria-labelledby="h-espacio">
+  <h3 id="h-espacio">Espaciado (base 4 px)</h3>
+  <div class="tt-card mq-row" style="align-items:flex-end">
+    <div><div style="width:4px;height:24px;background:#f59e0b"></div><small>1 · 4</small></div>
+    <div><div style="width:8px;height:24px;background:#f59e0b"></div><small>2 · 8</small></div>
+    <div><div style="width:12px;height:24px;background:#f59e0b"></div><small>3 · 12</small></div>
+    <div><div style="width:16px;height:24px;background:#f59e0b"></div><small>4 · 16</small></div>
+    <div><div style="width:24px;height:24px;background:#f59e0b"></div><small>5 · 24</small></div>
+    <div><div style="width:32px;height:24px;background:#f59e0b"></div><small>6 · 32</small></div>
+    <div><div style="width:48px;height:24px;background:#f59e0b"></div><small>7 · 48</small></div>
+  </div>
+</section>
+
+<!-- ════════════════════════════ COMPONENTES ════════════════════════════ -->
+<h2 id="componentes" class="mq-role">Componentes y sus estados</h2>
+
+<section class="mq-screen" aria-labelledby="h-botones">
+  <h3 id="h-botones">Botones: normal, hover, foco, activo, deshabilitado y cargando</h3>
+  <div class="tt-card">
+    <div class="mq-row">
+      <button class="tt-btn tt-btn--primary" type="button">Primario</button>
+      <button class="tt-btn tt-btn--primary tt-fake-hover" type="button">Hover</button>
+      <button class="tt-btn tt-btn--primary tt-fake-focus" type="button">Foco</button>
+      <button class="tt-btn tt-btn--primary" type="button" style="transform:translateY(1px)">Activo</button>
+      <button class="tt-btn tt-btn--primary" type="button" disabled>Deshabilitado</button>
+      <button class="tt-btn tt-btn--primary" type="button" aria-busy="true">Guardando…</button>
+    </div>
+    <div class="mq-row">
+      <button class="tt-btn tt-btn--accent" type="button">Acento (ámbar + navy)</button>
+      <button class="tt-btn tt-btn--secondary" type="button">Secundario</button>
+      <button class="tt-btn tt-btn--danger" type="button">Cancelar viaje</button>
+      <button class="tt-btn tt-btn--ghost" type="button">Fantasma</button>
+      <button class="tt-btn tt-btn--secondary tt-btn--sm" type="button">Pequeño</button>
+    </div>
+  </div>
+</section>
+
+<section class="mq-screen" aria-labelledby="h-campos">
+  <h3 id="h-campos">Campos: normal, foco, deshabilitado y error</h3>
+  <div class="tt-card tt-form-grid">
+    <div class="tt-field">
+      <label class="tt-label" for="c1">Patente</label>
+      <input class="tt-input" id="c1" value="KTRP-21" aria-describedby="c1-h">
+      <span class="tt-hint" id="c1-h">Formato: 4 letras y 2 números.</span>
+    </div>
+    <div class="tt-field">
+      <label class="tt-label" for="c2">Origen (con foco)</label>
+      <input class="tt-input tt-fake-focus" id="c2" value="Planta Lo Espejo">
+    </div>
+    <div class="tt-field">
+      <label class="tt-label" for="c3">Empresa</label>
+      <input class="tt-input" id="c3" value="TRITRANSPORTES SpA" disabled>
+    </div>
+    <div class="tt-field">
+      <label class="tt-label" for="c4">Litros <span class="tt-req" aria-hidden="true">*</span></label>
+      <input class="tt-input" id="c4" value="0" inputmode="decimal" aria-invalid="true" aria-describedby="c4-e" required>
+      <span class="tt-error" id="c4-e">Los litros deben ser mayores que 0 y no superar 600.</span>
+    </div>
+  </div>
+</section>
+
+<section class="mq-screen" aria-labelledby="h-estados">
+  <h3 id="h-estados">Estados del viaje, alertas y KPI</h3>
+  <div class="tt-card">
+    <div class="mq-row">
+      <span class="tt-badge tt-badge--programado">Programado</span>
+      <span class="tt-badge tt-badge--en_ruta">En ruta</span>
+      <span class="tt-badge tt-badge--completado">Completado</span>
+      <span class="tt-badge tt-badge--cancelado">Cancelado</span>
+    </div>
+    <div class="tt-alert tt-alert--success" role="status"><span aria-hidden="true">✓</span> Viaje #14792 finalizado correctamente.</div>
+    <div class="tt-alert tt-alert--danger"><span aria-hidden="true">⚠</span> No se puede pasar de «Completado» a «En ruta».</div>
+    <div class="tt-alert tt-alert--info"><span aria-hidden="true">ℹ</span> Hay 3 mantenciones pendientes esta semana.</div>
+    <div class="tt-alert tt-alert--warning"><span aria-hidden="true">!</span> La licencia de Jorge Vega vence en 12 días.</div>
+  </div>
+</section>
+
+<!-- ════════════════════════════ ACCESO Y ERRORES ════════════════════════════ -->
+<h2 id="todos" class="mq-role">Todos los roles · acceso y errores</h2>
+
+<section class="mq-screen" aria-labelledby="h-login">
+  <h3 id="h-login">Inicio de sesión (con error de credenciales)</h3>
+  <p class="mq-note">Botón con texto navy sobre ámbar (8,31:1); el actual del sistema base tiene 2,15:1. El error se anuncia con <code>role="alert"</code> y el foco vuelve al campo de correo.</p>
+  <div class="mq-frame">
+    <div class="mq-frame__bar"><span></span><span></span><span></span><code>/TriTransportes/login</code></div>
+    <div class="mq-login tt-on-dark">
+      <div>
+        <span class="tt-brand">TRI<b>TRANSPORTES</b></span>
+        <p class="tagline">Gestión de flota y transporte</p>
+        <form class="tt-card" novalidate onsubmit="return false">
+          <h4 class="mq-h1" style="font-size:var(--tt-fs-xl)">Iniciar sesión</h4>
+          <p class="tt-hint">Ingrese con su correo corporativo.</p>
+          <div class="tt-alert tt-alert--danger" role="alert">Correo o contraseña incorrectos. Le quedan 4 intentos.</div>
+          <div class="tt-field">
+            <label class="tt-label" for="l-email">Correo electrónico</label>
+            <input class="tt-input" id="l-email" type="email" autocomplete="username" value="supervisor@tritransportes.cl">
+          </div>
+          <div class="tt-field">
+            <label class="tt-label" for="l-pass">Contraseña</label>
+            <input class="tt-input" id="l-pass" type="password" autocomplete="current-password" value="••••••••">
+          </div>
+          <button class="tt-btn tt-btn--accent tt-btn--block" type="submit">Ingresar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="tt-grid tt-grid--2">
+  <section class="mq-screen" aria-labelledby="h-403">
+    <h3 id="h-403">Sin permisos (403)</h3>
+    <div class="mq-frame">
+      <div class="mq-frame__bar"><span></span><span></span><span></span><code>/usuarios</code></div>
+      <div class="tt-main"><div class="tt-card tt-empty">
+        <div class="tt-empty__icon" aria-hidden="true">🔒</div>
+        <h4 class="mq-h1">No tiene permiso para ver esta página</h4>
+        <p>Su rol (<strong>Conductor</strong>) no incluye la administración de usuarios. Si cree que es un error, contacte al administrador.</p>
+        <a class="tt-btn tt-btn--primary" href="#conductor">Volver a mis viajes</a>
+      </div></div>
+    </div>
+  </section>
+  <section class="mq-screen" aria-labelledby="h-404">
+    <h3 id="h-404">Página no encontrada (404)</h3>
+    <div class="mq-frame">
+      <div class="mq-frame__bar"><span></span><span></span><span></span><code>/viajes/99999</code></div>
+      <div class="tt-main"><div class="tt-card tt-empty">
+        <div class="tt-empty__icon" aria-hidden="true">🧭</div>
+        <h4 class="mq-h1">No encontramos esa página</h4>
+        <p>El viaje no existe o no pertenece a su empresa. Revise la dirección o vuelva al listado.</p>
+        <a class="tt-btn tt-btn--primary" href="#supervisor">Ir al listado de viajes</a>
+      </div></div>
+    </div>
+  </section>
+</div>
+
+<!-- ════════════════════════════ SUPERVISOR ════════════════════════════ -->
+<h2 id="supervisor" class="mq-role">Supervisor</h2>
+
+<section class="mq-screen" aria-labelledby="h-viajes">
+  <h3 id="h-viajes">Listado de viajes · búsqueda, filtros, orden y paginación</h3>
+  <p class="mq-note">En el celular el menú se colapsa (botón con <code>aria-expanded</code>) y la tabla se convierte en tarjetas apiladas. La columna ordenada declara <code>aria-sort</code>.</p>
+  <div class="mq-frame">
+    <div class="mq-frame__bar"><span></span><span></span><span></span><code>/TriTransportes/viajes</code></div>
+    <div class="tt-app">
+      <aside class="tt-sidebar tt-on-dark" id="menu-sup" hidden>
+        <a class="tt-brand" href="#supervisor">TRI<b>TRANSPORTES</b></a>
+        <nav aria-label="Menú principal (supervisor)">
+          <ul class="tt-nav">
+            <li class="tt-nav__section">Operación</li>
+            <li><a href="#gerencia"><span aria-hidden="true">▦</span> Dashboard</a></li>
+            <li><a href="#supervisor" aria-current="page"><span aria-hidden="true">🚚</span> Viajes</a></li>
+            <li><a href="#conductor"><span aria-hidden="true">⛽</span> Combustible</a></li>
+            <li><a href="#supervisor"><span aria-hidden="true">🔧</span> Mantenciones</a></li>
+            <li class="tt-nav__section">Análisis</li>
+            <li><a href="#gerencia"><span aria-hidden="true">📄</span> Reportes</a></li>
+          </ul>
+        </nav>
+      </aside>
+      <div>
+        <div class="tt-topbar">
+          <button class="tt-btn tt-btn--ghost tt-menu-toggle" type="button" aria-controls="menu-sup" aria-expanded="false" data-toggle-menu>
+            <span aria-hidden="true">☰</span><span class="tt-sr-only">Abrir menú</span>
+          </button>
+          <span class="tt-breadcrumb">Operación / <strong>Viajes</strong></span>
+          <span style="margin-left:auto" class="tt-hint">Paula Rojas · Supervisor</span>
+        </div>
+        <div class="tt-main">
+          <div class="tt-page-head">
+            <h4 class="mq-h1">Viajes</h4>
+            <a class="tt-btn tt-btn--accent" href="#h-form-viaje"><span aria-hidden="true">＋</span> Programar viaje</a>
+          </div>
+          <form class="tt-filters tt-card" role="search" aria-label="Filtrar viajes" onsubmit="return false">
+            <div class="tt-field"><label class="tt-label" for="f-q">Buscar</label><input class="tt-input" id="f-q" type="search" placeholder="Patente, conductor u obra"></div>
+            <div class="tt-field"><label class="tt-label" for="f-est">Estado</label>
+              <select class="tt-select" id="f-est"><option>Todos</option><option>Programado</option><option selected>En ruta</option><option>Completado</option><option>Cancelado</option></select></div>
+            <div class="tt-field"><label class="tt-label" for="f-desde">Desde</label><input class="tt-input" id="f-desde" type="date" value="2026-11-01"></div>
+            <div class="tt-field"><label class="tt-label" for="f-hasta">Hasta</label><input class="tt-input" id="f-hasta" type="date" value="2026-11-08"></div>
+            <button class="tt-btn tt-btn--primary" type="submit">Aplicar filtros</button>
+          </form>
+          <p class="tt-hint" role="status">Mostrando 1–5 de 128 viajes en ruta.</p>
+          <div class="tt-table-wrap">
+            <table class="tt-table tt-table--stack">
+              <caption class="tt-sr-only">Viajes filtrados, ordenados por fecha descendente</caption>
+              <thead><tr>
+                <th scope="col" aria-sort="descending"><button class="tt-sort" type="button">Fecha <span aria-hidden="true">▼</span></button></th>
+                <th scope="col"><button class="tt-sort" type="button">Vehículo</button></th>
+                <th scope="col">Conductor</th>
+                <th scope="col">Origen → Destino</th>
+                <th scope="col" class="tt-num">Carga</th>
+                <th scope="col">Estado</th>
+                <th scope="col"><span class="tt-sr-only">Acciones</span></th>
+              </tr></thead>
+              <tbody>
+                <tr><td data-label="Fecha">08-11-2026 07:30</td><td data-label="Vehículo">KTRP-21</td><td data-label="Conductor">Jorge Vega</td><td data-label="Ruta">Planta Lo Espejo → Obra Ruta 68</td><td data-label="Carga" class="tt-num">20,0 m³</td><td data-label="Estado"><span class="tt-badge tt-badge--en_ruta">En ruta</span></td><td data-label="Acciones"><a class="tt-btn tt-btn--secondary tt-btn--sm" href="#h-form-viaje">Ver <span class="tt-sr-only">viaje de KTRP-21</span></a></td></tr>
+                <tr><td data-label="Fecha">08-11-2026 07:10</td><td data-label="Vehículo">HJLS-48</td><td data-label="Conductor">Patricio Díaz</td><td data-label="Ruta">Cantera Pudahuel → Obra Américo Vespucio</td><td data-label="Carga" class="tt-num">18,5 m³</td><td data-label="Estado"><span class="tt-badge tt-badge--en_ruta">En ruta</span></td><td data-label="Acciones"><a class="tt-btn tt-btn--secondary tt-btn--sm" href="#h-form-viaje">Ver <span class="tt-sr-only">viaje de HJLS-48</span></a></td></tr>
+                <tr><td data-label="Fecha">07-11-2026 16:45</td><td data-label="Vehículo">GXBR-73</td><td data-label="Conductor">Andrés Salinas</td><td data-label="Ruta">Planta Lo Espejo → Obra Costanera</td><td data-label="Carga" class="tt-num">20,0 m³</td><td data-label="Estado"><span class="tt-badge tt-badge--en_ruta">En ruta</span></td><td data-label="Acciones"><a class="tt-btn tt-btn--secondary tt-btn--sm" href="#h-form-viaje">Ver <span class="tt-sr-only">viaje de GXBR-73</span></a></td></tr>
+                <tr><td data-label="Fecha">07-11-2026 14:20</td><td data-label="Vehículo">KTRP-21</td><td data-label="Conductor">Jorge Vega</td><td data-label="Ruta">Cantera Pudahuel → Obra Ruta 68</td><td data-label="Carga" class="tt-num">19,0 m³</td><td data-label="Estado"><span class="tt-badge tt-badge--en_ruta">En ruta</span></td><td data-label="Acciones"><a class="tt-btn tt-btn--secondary tt-btn--sm" href="#h-form-viaje">Ver <span class="tt-sr-only">viaje de KTRP-21</span></a></td></tr>
+                <tr><td data-label="Fecha">07-11-2026 09:05</td><td data-label="Vehículo">PLWD-15</td><td data-label="Conductor">Felipe Morales</td><td data-label="Ruta">Planta Lo Espejo → Obra Américo Vespucio</td><td data-label="Carga" class="tt-num">20,0 m³</td><td data-label="Estado"><span class="tt-badge tt-badge--en_ruta">En ruta</span></td><td data-label="Acciones"><a class="tt-btn tt-btn--secondary tt-btn--sm" href="#h-form-viaje">Ver <span class="tt-sr-only">viaje de PLWD-15</span></a></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <nav class="tt-pagination" aria-label="Paginación de viajes">
+            <span class="tt-hint">Página 1 de 26</span>
+            <ul>
+              <li><a class="tt-btn tt-btn--secondary tt-btn--sm" aria-disabled="true">Anterior</a></li>
+              <li><a class="tt-btn tt-btn--sm" href="#h-viajes" aria-current="page">1</a></li>
+              <li><a class="tt-btn tt-btn--secondary tt-btn--sm" href="#h-viajes">2</a></li>
+              <li><a class="tt-btn tt-btn--secondary tt-btn--sm" href="#h-viajes">3</a></li>
+              <li><a class="tt-btn tt-btn--secondary tt-btn--sm" href="#h-viajes">Siguiente</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mq-screen" aria-labelledby="h-form-viaje">
+  <h3 id="h-form-viaje">Programar viaje · validación inmediata y resumen de errores</h3>
+  <p class="mq-note">Pruebe el formulario: al salir de un campo se valida (validación inmediata); al enviar con errores aparece el resumen, que recibe el foco y enlaza a cada campo. La misma regla se valida otra vez en la API (422) y en la base de datos (CHECK).</p>
+  <div class="mq-frame">
+    <div class="mq-frame__bar"><span></span><span></span><span></span><code>/TriTransportes/viajes/nuevo</code></div>
+    <div class="tt-main">
+      <form class="tt-card" id="form-viaje" novalidate>
+        <h4 class="mq-h1" style="margin-bottom:var(--tt-space-4)">Programar viaje</h4>
+        <div class="tt-error-summary" id="resumen" tabindex="-1" hidden>
+          <strong>Revise 2 campos antes de guardar:</strong>
+          <ul id="resumen-lista"></ul>
+        </div>
+        <div class="tt-form-grid">
+          <div class="tt-field">
+            <label class="tt-label" for="v-veh">Vehículo <span class="tt-req" aria-hidden="true">*</span></label>
+            <select class="tt-select" id="v-veh" required aria-describedby="v-veh-e">
+              <option value="">Seleccione…</option><option>KTRP-21 · Volvo FMX</option><option>HJLS-48 · Mercedes Actros</option>
+            </select>
+            <span class="tt-error" id="v-veh-e" hidden>Seleccione el vehículo del viaje.</span>
+          </div>
+          <div class="tt-field">
+            <label class="tt-label" for="v-cond">Conductor <span class="tt-req" aria-hidden="true">*</span></label>
+            <select class="tt-select" id="v-cond" required aria-describedby="v-cond-h">
+              <option>Jorge Vega · licencia A4 vigente</option><option>Patricio Díaz · licencia A4 vigente</option>
+            </select>
+            <span class="tt-hint" id="v-cond-h">Solo se listan conductores con licencia vigente.</span>
+          </div>
+          <div class="tt-field">
+            <label class="tt-label" for="v-fecha">Fecha <span class="tt-req" aria-hidden="true">*</span></label>
+            <input class="tt-input" id="v-fecha" type="date" value="2026-11-09" required>
+          </div>
+          <div class="tt-field">
+            <label class="tt-label" for="v-obra">Obra de destino</label>
+            <select class="tt-select" id="v-obra"><option>Obra Ruta 68 · km 12</option><option>Obra Américo Vespucio</option></select>
+          </div>
+          <div class="tt-field">
+            <label class="tt-label" for="v-ki">Kilometraje inicial</label>
+            <input class="tt-input" id="v-ki" inputmode="numeric" value="184500" aria-describedby="v-ki-h">
+            <span class="tt-hint" id="v-ki-h">Odómetro del vehículo al salir.</span>
+          </div>
+          <div class="tt-field">
+            <label class="tt-label" for="v-cant">Carga (m³) <span class="tt-req" aria-hidden="true">*</span></label>
+            <input class="tt-input" id="v-cant" inputmode="decimal" value="-5" required aria-describedby="v-cant-e">
+            <span class="tt-error" id="v-cant-e" hidden>La carga debe ser un número mayor o igual a 0.</span>
+          </div>
+          <div class="tt-field tt-span-2">
+            <label class="tt-label" for="v-obs">Observaciones</label>
+            <textarea class="tt-textarea" id="v-obs" rows="3" maxlength="1000"></textarea>
+          </div>
+        </div>
+        <div class="mq-row" style="justify-content:flex-end;margin:0">
+          <button class="tt-btn tt-btn--secondary" type="reset">Limpiar</button>
+          <button class="tt-btn tt-btn--primary" type="submit">Guardar viaje</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════ CONDUCTOR ════════════════════════════ -->
+<h2 id="conductor" class="mq-role">Conductor (celular, 360–390 px)</h2>
+
+<div class="tt-grid tt-grid--3">
+  <section class="mq-screen" aria-labelledby="h-mis">
+    <h3 id="h-mis">Mis viajes de hoy</h3>
+    <div class="mq-frame mq-phone">
+      <div class="tt-topbar"><span class="tt-brand">TRI<b>TRANSPORTES</b></span></div>
+      <div class="tt-main">
+        <h4 class="mq-h1" style="font-size:var(--tt-fs-xl)">Mis viajes · hoy</h4>
+        <p class="tt-hint">Jorge Vega · KTRP-21</p>
+        <article class="tt-card" style="margin-bottom:var(--tt-space-3)">
+          <div class="tt-card__header"><strong>07:30 · Viaje #14792</strong><span class="tt-badge tt-badge--en_ruta">En ruta</span></div>
+          <p style="margin:0">Planta Lo Espejo → <strong>Obra Ruta 68</strong></p>
+          <p class="tt-hint">20 m³ de grava · salió con 184.500 km</p>
+          <button class="tt-btn tt-btn--accent tt-btn--block" type="button" data-open-modal="modal-fin">Finalizar viaje</button>
+        </article>
+        <article class="tt-card">
+          <div class="tt-card__header"><strong>11:00 · Viaje #14801</strong><span class="tt-badge tt-badge--programado">Programado</span></div>
+          <p style="margin:0">Cantera Pudahuel → <strong>Obra Ruta 68</strong></p>
+          <p class="tt-hint">19 m³ de arena</p>
+          <button class="tt-btn tt-btn--secondary tt-btn--block" type="button" disabled>Iniciar (cuando finalice el anterior)</button>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="mq-screen" aria-labelledby="h-carga">
+    <h3 id="h-carga">Registrar carga de combustible (con errores)</h3>
+    <div class="mq-frame mq-phone">
+      <div class="tt-topbar"><span class="tt-brand">TRI<b>TRANSPORTES</b></span></div>
+      <div class="tt-main">
+        <h4 class="mq-h1" style="font-size:var(--tt-fs-xl)">Cargar combustible</h4>
+        <form novalidate onsubmit="return false">
+          <div class="tt-field"><label class="tt-label" for="k-veh">Vehículo</label><input class="tt-input" id="k-veh" value="KTRP-21" readonly></div>
+          <div class="tt-field">
+            <label class="tt-label" for="k-lit">Litros <span class="tt-req" aria-hidden="true">*</span></label>
+            <input class="tt-input" id="k-lit" inputmode="decimal" value="750" aria-invalid="true" aria-describedby="k-lit-e">
+            <span class="tt-error" id="k-lit-e" role="alert">Máximo 600 litros por carga (capacidad del estanque).</span>
+          </div>
+          <div class="tt-field">
+            <label class="tt-label" for="k-odo">Odómetro (km) <span class="tt-req" aria-hidden="true">*</span></label>
+            <input class="tt-input" id="k-odo" inputmode="numeric" value="184200" aria-invalid="true" aria-describedby="k-odo-e">
+            <span class="tt-error" id="k-odo-e">No puede ser menor que el último registrado (184.500 km).</span>
+          </div>
+          <div class="tt-field"><label class="tt-label" for="k-pre">Precio por litro (CLP)</label><input class="tt-input" id="k-pre" inputmode="decimal" value="1.089"></div>
+          <button class="tt-btn tt-btn--primary tt-btn--block" type="submit">Registrar carga</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="mq-screen" aria-labelledby="h-vacio">
+    <h3 id="h-vacio">Estado vacío y carga</h3>
+    <div class="mq-frame mq-phone">
+      <div class="tt-topbar"><span class="tt-brand">TRI<b>TRANSPORTES</b></span></div>
+      <div class="tt-main">
+        <h4 class="mq-h1" style="font-size:var(--tt-fs-xl)">Mis viajes · mañana</h4>
+        <div class="tt-card tt-empty">
+          <div class="tt-empty__icon" aria-hidden="true">🛣️</div>
+          <p><strong>No tiene viajes programados para mañana.</strong></p>
+          <p>Cuando el supervisor le asigne un viaje aparecerá aquí.</p>
+        </div>
+        <p class="tt-hint" style="margin-top:var(--tt-space-4)">Mientras carga:</p>
+        <div class="tt-card" aria-busy="true" aria-label="Cargando viajes">
+          <div class="tt-skeleton" style="width:60%;margin-bottom:8px"></div>
+          <div class="tt-skeleton" style="width:90%;margin-bottom:8px"></div>
+          <div class="tt-skeleton" style="width:40%;height:44px"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<dialog class="tt-modal" id="modal-fin" aria-labelledby="modal-fin-t">
+  <form method="dialog">
+    <div class="tt-modal__body">
+      <h4 id="modal-fin-t" style="font-size:var(--tt-fs-xl)">Finalizar viaje #14792</h4>
+      <div class="tt-field">
+        <label class="tt-label" for="m-km">Kilometraje final <span class="tt-req" aria-hidden="true">*</span></label>
+        <input class="tt-input" id="m-km" inputmode="numeric" value="184537" aria-describedby="m-km-h">
+        <span class="tt-hint" id="m-km-h">Debe ser mayor o igual a 184.500 km.</span>
+      </div>
+    </div>
+    <div class="tt-modal__actions">
+      <button class="tt-btn tt-btn--secondary" value="cancel">Volver</button>
+      <button class="tt-btn tt-btn--primary" value="ok">Confirmar término</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- ════════════════════════════ GERENCIA ════════════════════════════ -->
+<h2 id="gerencia" class="mq-role">Gerencia</h2>
+
+<section class="mq-screen" aria-labelledby="h-dash">
+  <h3 id="h-dash">Dashboard · 6 KPI, 4 gráficos con tabla de datos y resumen con IA</h3>
+  <p class="mq-note">Cada gráfico tiene título, conclusión en texto (<code>figcaption</code>) y un botón «Ver tabla de datos». Los filtros recalculan todo vía <code>/api/v1/dashboard/*</code>. Los datos son ilustrativos.</p>
+  <div class="mq-frame">
+    <div class="mq-frame__bar"><span></span><span></span><span></span><code>/TriTransportes/dashboard</code></div>
+    <div class="tt-main">
+      <div class="tt-page-head">
+        <h4 class="mq-h1">Dashboard de operación</h4>
+        <div class="mq-row" style="margin:0">
+          <a class="tt-btn tt-btn--secondary" href="#h-reporte">Reportes</a>
+          <button class="tt-btn tt-btn--accent" type="button">Generar resumen con IA</button>
+        </div>
+      </div>
+      <form class="tt-filters tt-card" aria-label="Filtros del dashboard" onsubmit="return false">
+        <div class="tt-field"><label class="tt-label" for="d-desde">Desde</label><input class="tt-input" id="d-desde" type="date" value="2026-05-01"></div>
+        <div class="tt-field"><label class="tt-label" for="d-hasta">Hasta</label><input class="tt-input" id="d-hasta" type="date" value="2026-10-31"></div>
+        <div class="tt-field"><label class="tt-label" for="d-obra">Obra</label><select class="tt-select" id="d-obra"><option>Todas</option><option>Obra Ruta 68</option></select></div>
+        <div class="tt-field"><label class="tt-label" for="d-veh">Vehículo</label><select class="tt-select" id="d-veh"><option>Todos</option><option>KTRP-21</option></select></div>
+        <button class="tt-btn tt-btn--primary" type="submit">Actualizar</button>
+      </form>
+
+      <div class="tt-grid tt-grid--kpi" style="margin-bottom:var(--tt-space-4)">
+        <div class="tt-card tt-kpi tt-kpi--accent"><span class="tt-kpi__label">Rendimiento</span><span class="tt-kpi__value">2,4 km/L</span><span class="tt-kpi__delta tt-kpi__delta--down">3,1 % vs. período anterior</span></div>
+        <div class="tt-card tt-kpi"><span class="tt-kpi__label">Costo combustible / viaje</span><span class="tt-kpi__value">$41.300</span><span class="tt-kpi__delta tt-kpi__delta--down">5,2 % más caro</span></div>
+        <div class="tt-card tt-kpi"><span class="tt-kpi__label">Cumplimiento de viajes</span><span class="tt-kpi__value">94 %</span><span class="tt-kpi__delta tt-kpi__delta--up">1,8 pts</span></div>
+        <div class="tt-card tt-kpi"><span class="tt-kpi__label">Disponibilidad de flota</span><span class="tt-kpi__value">88 %</span><span class="tt-kpi__delta tt-kpi__delta--up">2,0 pts</span></div>
+        <div class="tt-card tt-kpi"><span class="tt-kpi__label">MTBF</span><span class="tt-kpi__value">412 h</span><span class="tt-kpi__delta tt-kpi__delta--up">entre fallas</span></div>
+        <div class="tt-card tt-kpi"><span class="tt-kpi__label">Tasa de cancelación</span><span class="tt-kpi__value">3,7 %</span><span class="tt-kpi__delta tt-kpi__delta--down">0,6 pts más</span></div>
+      </div>
+
+      <div class="tt-card mq-ai" style="margin-bottom:var(--tt-space-4)" aria-live="polite">
+        <h5 class="tt-card__title">Resumen con IA · mayo a octubre 2026</h5>
+        <p>El cumplimiento subió a 94 %, pero el costo de combustible por viaje creció 5,2 %. El aumento se concentra en <strong>HJLS-48</strong>, cuyo rendimiento cayó de 2,6 a 2,1 km/L desde agosto.</p>
+        <ul><li>Programar una revisión de inyectores para HJLS-48.</li><li>Revisar los 14 viajes cancelados de septiembre en Obra Costanera.</li></ul>
+        <p class="tt-hint" style="margin:0">Generado por Llama 3.3 (Groq) a partir de los indicadores del período. Verifique antes de decidir.</p>
+      </div>
+
+      <div class="tt-grid tt-grid--2">
+        <figure class="tt-card" style="margin:0">
+          <h5 class="tt-card__title" id="g1-t">Viajes completados por mes</h5>
+          <svg class="mq-chart" viewBox="0 0 320 170" role="img" aria-labelledby="g1-t g1-d">
+            <desc id="g1-d">Gráfico de barras: viajes completados de mayo a octubre, entre 1.120 y 1.310.</desc>
+            <g fill="#0f172a">
+              <rect x="20" y="52" width="34" height="98"/><rect x="70" y="44" width="34" height="106"/><rect x="120" y="38" width="34" height="112"/>
+              <rect x="170" y="30" width="34" height="120"/><rect x="220" y="36" width="34" height="114"/><rect x="270" y="24" width="34" height="126" fill="#f59e0b" stroke="#0f172a"/>
+            </g>
+            <line x1="10" y1="150" x2="314" y2="150" stroke="#64748b"/>
+            <g><text x="26" y="165">May</text><text x="76" y="165">Jun</text><text x="128" y="165">Jul</text><text x="176" y="165">Ago</text><text x="226" y="165">Sep</text><text x="278" y="165">Oct</text></g>
+          </svg>
+          <figcaption class="tt-hint">Octubre es el mes con más viajes completados (1.310), un 17 % más que mayo.</figcaption>
+          <details><summary class="tt-btn tt-btn--ghost tt-btn--sm">Ver tabla de datos</summary>
+            <table class="tt-table"><caption>Viajes completados por mes</caption><thead><tr><th scope="col">Mes</th><th scope="col" class="tt-num">Viajes</th></tr></thead>
+            <tbody><tr><td>Mayo</td><td class="tt-num">1.120</td></tr><tr><td>Junio</td><td class="tt-num">1.190</td></tr><tr><td>Julio</td><td class="tt-num">1.240</td></tr><tr><td>Agosto</td><td class="tt-num">1.290</td></tr><tr><td>Septiembre</td><td class="tt-num">1.250</td></tr><tr><td>Octubre</td><td class="tt-num">1.310</td></tr></tbody></table>
+          </details>
+        </figure>
+
+        <figure class="tt-card" style="margin:0">
+          <h5 class="tt-card__title" id="g2-t">Costo de combustible por mes (MM CLP)</h5>
+          <svg class="mq-chart" viewBox="0 0 320 170" role="img" aria-labelledby="g2-t g2-d">
+            <desc id="g2-d">Gráfico de línea: el costo mensual sube de 45 a 54 millones entre mayo y octubre.</desc>
+            <line x1="10" y1="150" x2="314" y2="150" stroke="#64748b"/>
+            <polyline fill="none" stroke="#0f172a" stroke-width="3" points="37,110 87,100 137,96 187,80 237,72 287,58"/>
+            <g fill="#f59e0b" stroke="#0f172a" stroke-width="2"><circle cx="37" cy="110" r="5"/><circle cx="87" cy="100" r="5"/><circle cx="137" cy="96" r="5"/><circle cx="187" cy="80" r="5"/><circle cx="237" cy="72" r="5"/><circle cx="287" cy="58" r="5"/></g>
+            <g><text x="26" y="165">May</text><text x="76" y="165">Jun</text><text x="128" y="165">Jul</text><text x="176" y="165">Ago</text><text x="226" y="165">Sep</text><text x="278" y="165">Oct</text></g>
+          </svg>
+          <figcaption class="tt-hint">El costo creció 20 % en seis meses, más rápido que la cantidad de viajes (17 %).</figcaption>
+          <details><summary class="tt-btn tt-btn--ghost tt-btn--sm">Ver tabla de datos</summary>
+            <table class="tt-table"><caption>Costo de combustible por mes</caption><thead><tr><th scope="col">Mes</th><th scope="col" class="tt-num">MM CLP</th></tr></thead>
+            <tbody><tr><td>Mayo</td><td class="tt-num">45,1</td></tr><tr><td>Junio</td><td class="tt-num">46,8</td></tr><tr><td>Julio</td><td class="tt-num">47,5</td></tr><tr><td>Agosto</td><td class="tt-num">50,2</td></tr><tr><td>Septiembre</td><td class="tt-num">51,6</td></tr><tr><td>Octubre</td><td class="tt-num">54,0</td></tr></tbody></table>
+          </details>
+        </figure>
+
+        <figure class="tt-card" style="margin:0">
+          <h5 class="tt-card__title" id="g3-t">Rendimiento por vehículo (km/L)</h5>
+          <svg class="mq-chart" viewBox="0 0 320 170" role="img" aria-labelledby="g3-t g3-d">
+            <desc id="g3-d">Barras horizontales: GXBR-73 tiene el mejor rendimiento (2,7 km/L) y HJLS-48 el peor (2,1 km/L).</desc>
+            <g><text x="4" y="30">GXBR-73</text><text x="4" y="62">KTRP-21</text><text x="4" y="94">PLWD-15</text><text x="4" y="126">HJLS-48</text></g>
+            <g fill="#0f172a"><rect x="70" y="18" width="216" height="18"/><rect x="70" y="50" width="200" height="18"/><rect x="70" y="82" width="184" height="18"/></g>
+            <rect x="70" y="114" width="168" height="18" fill="#b91c1c"/>
+            <g><text x="290" y="31">2,7</text><text x="274" y="63">2,5</text><text x="258" y="95">2,3</text><text x="242" y="127">2,1 ⚠</text></g>
+          </svg>
+          <figcaption class="tt-hint">HJLS-48 rinde 22 % menos que el mejor camión: candidato a revisión mecánica.</figcaption>
+          <details><summary class="tt-btn tt-btn--ghost tt-btn--sm">Ver tabla de datos</summary>
+            <table class="tt-table"><caption>Rendimiento por vehículo</caption><thead><tr><th scope="col">Vehículo</th><th scope="col" class="tt-num">km/L</th></tr></thead>
+            <tbody><tr><td>GXBR-73</td><td class="tt-num">2,7</td></tr><tr><td>KTRP-21</td><td class="tt-num">2,5</td></tr><tr><td>PLWD-15</td><td class="tt-num">2,3</td></tr><tr><td>HJLS-48</td><td class="tt-num">2,1</td></tr></tbody></table>
+          </details>
+        </figure>
+
+        <figure class="tt-card" style="margin:0">
+          <h5 class="tt-card__title" id="g4-t">Viajes por estado (período)</h5>
+          <svg class="mq-chart" viewBox="0 0 320 170" role="img" aria-labelledby="g4-t g4-d">
+            <desc id="g4-d">Barra apilada: 89 % completados, 4 % en ruta, 3 % programados y 4 % cancelados.</desc>
+            <rect x="10" y="40" width="267" height="40" fill="#15803d"/><rect x="277" y="40" width="12" height="40" fill="#f59e0b"/>
+            <rect x="289" y="40" width="9" height="40" fill="#1d4ed8"/><rect x="298" y="40" width="12" height="40" fill="#64748b"/>
+            <g><text x="10" y="105">✓ Completado 89 %</text><text x="10" y="125">➜ En ruta 4 %</text><text x="170" y="105">◷ Programado 3 %</text><text x="170" y="125">✕ Cancelado 4 %</text></g>
+          </svg>
+          <figcaption class="tt-hint">Casi 9 de cada 10 viajes se completan; las cancelaciones (4 %) son el foco de mejora.</figcaption>
+          <details><summary class="tt-btn tt-btn--ghost tt-btn--sm">Ver tabla de datos</summary>
+            <table class="tt-table"><caption>Viajes por estado</caption><thead><tr><th scope="col">Estado</th><th scope="col" class="tt-num">Viajes</th><th scope="col" class="tt-num">%</th></tr></thead>
+            <tbody><tr><td>Completado</td><td class="tt-num">6.590</td><td class="tt-num">89</td></tr><tr><td>En ruta</td><td class="tt-num">296</td><td class="tt-num">4</td></tr><tr><td>Programado</td><td class="tt-num">222</td><td class="tt-num">3</td></tr><tr><td>Cancelado</td><td class="tt-num">274</td><td class="tt-num">4</td></tr></tbody></table>
+          </details>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mq-screen" aria-labelledby="h-reporte">
+  <h3 id="h-reporte">Reporte gerencial · exportar e imprimir</h3>
+  <p class="mq-note">Los botones exportan con los filtros aplicados (XLSX, PDF, CSV). «Imprimir» usa <code>@media print</code>: oculta menú y botones y muestra la cabecera del informe. Pruebe Ctrl+P en esta página.</p>
+  <div class="mq-frame">
+    <div class="mq-frame__bar"><span></span><span></span><span></span><code>/TriTransportes/reportes/gerencial-mensual?desde=2026-10-01&amp;hasta=2026-10-31</code></div>
+    <div class="tt-main">
+      <div class="tt-page-head">
+        <h4 class="mq-h1">Reporte gerencial mensual</h4>
+        <div class="mq-row tt-no-print" style="margin:0">
+          <button class="tt-btn tt-btn--secondary" type="button">Excel (.xlsx)</button>
+          <button class="tt-btn tt-btn--secondary" type="button">PDF</button>
+          <button class="tt-btn tt-btn--secondary" type="button">CSV</button>
+          <button class="tt-btn tt-btn--primary" type="button" onclick="window.print()">Imprimir</button>
+        </div>
+      </div>
+      <div class="tt-print-only"><p><strong>TriTransportes · Reporte gerencial mensual</strong><br>Filtros: 01-10-2026 a 31-10-2026 · todas las obras · Emitido el 08-11-2026 por Gerencia</p></div>
+      <div class="tt-table-wrap">
+        <table class="tt-table">
+          <caption>Resumen por vehículo · octubre 2026</caption>
+          <thead><tr><th scope="col">Vehículo</th><th scope="col" class="tt-num">Viajes</th><th scope="col" class="tt-num">Km</th><th scope="col" class="tt-num">Litros</th><th scope="col" class="tt-num">km/L</th><th scope="col" class="tt-num">Costo (CLP)</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">GXBR-73</th><td class="tt-num">342</td><td class="tt-num">12.480</td><td class="tt-num">4.622</td><td class="tt-num">2,7</td><td class="tt-num">5.033.400</td></tr>
+            <tr><th scope="row">KTRP-21</th><td class="tt-num">331</td><td class="tt-num">12.050</td><td class="tt-num">4.820</td><td class="tt-num">2,5</td><td class="tt-num">5.249.000</td></tr>
+            <tr><th scope="row">PLWD-15</th><td class="tt-num">325</td><td class="tt-num">11.700</td><td class="tt-num">5.087</td><td class="tt-num">2,3</td><td class="tt-num">5.539.700</td></tr>
+            <tr><th scope="row">HJLS-48</th><td class="tt-num">312</td><td class="tt-num">11.230</td><td class="tt-num">5.348</td><td class="tt-num">2,1</td><td class="tt-num">5.824.000</td></tr>
+          </tbody>
+          <tfoot><tr><th scope="row">Total</th><td class="tt-num"><strong>1.310</strong></td><td class="tt-num"><strong>47.460</strong></td><td class="tt-num"><strong>19.877</strong></td><td class="tt-num"><strong>2,4</strong></td><td class="tt-num"><strong>21.646.100</strong></td></tr></tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════ ADMINISTRADOR ════════════════════════════ -->
+<h2 id="administrador" class="mq-role">Administrador</h2>
+
+<div class="tt-grid tt-grid--2">
+  <section class="mq-screen" aria-labelledby="h-usuarios">
+    <h3 id="h-usuarios">Usuarios y roles</h3>
+    <div class="mq-frame">
+      <div class="mq-frame__bar"><span></span><span></span><span></span><code>/TriTransportes/usuarios</code></div>
+      <div class="tt-main">
+        <div class="tt-page-head"><h4 class="mq-h1" style="font-size:var(--tt-fs-xl)">Usuarios</h4><button class="tt-btn tt-btn--accent" type="button">＋ Nuevo usuario</button></div>
+        <div class="tt-table-wrap">
+          <table class="tt-table tt-table--stack">
+            <caption class="tt-sr-only">Usuarios del sistema</caption>
+            <thead><tr><th scope="col">Nombre</th><th scope="col">Correo</th><th scope="col">Rol</th><th scope="col">Estado</th></tr></thead>
+            <tbody>
+              <tr><td data-label="Nombre">Administrador TriTransportes</td><td data-label="Correo">admin@tritransportes.cl</td><td data-label="Rol">Administrador</td><td data-label="Estado"><span class="tt-badge tt-badge--completado">Activo</span></td></tr>
+              <tr><td data-label="Nombre">Paula Rojas</td><td data-label="Correo">supervisor@tritransportes.cl</td><td data-label="Rol">Supervisor</td><td data-label="Estado"><span class="tt-badge tt-badge--completado">Activo</span></td></tr>
+              <tr><td data-label="Nombre">Jorge Vega</td><td data-label="Correo">jvega@tritransportes.cl</td><td data-label="Rol">Conductor</td><td data-label="Estado"><span class="tt-badge tt-badge--completado">Activo</span></td></tr>
+              <tr><td data-label="Nombre">Carolina Fuentes</td><td data-label="Correo">gerencia@tritransportes.cl</td><td data-label="Rol">Gerencia</td><td data-label="Estado"><span class="tt-badge tt-badge--cancelado">Inactivo</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mq-screen" aria-labelledby="h-audit">
+    <h3 id="h-audit">Registro de auditoría</h3>
+    <div class="mq-frame">
+      <div class="mq-frame__bar"><span></span><span></span><span></span><code>/TriTransportes/auditoria</code></div>
+      <div class="tt-main">
+        <h4 class="mq-h1" style="font-size:var(--tt-fs-xl)">Auditoría</h4>
+        <div class="tt-table-wrap">
+          <table class="tt-table tt-table--stack">
+            <caption class="tt-sr-only">Últimos cambios registrados</caption>
+            <thead><tr><th scope="col">Fecha</th><th scope="col">Usuario</th><th scope="col">Acción</th><th scope="col">Detalle</th></tr></thead>
+            <tbody>
+              <tr><td data-label="Fecha">08-11 09:12</td><td data-label="Usuario">Jorge Vega</td><td data-label="Acción">Cambio de estado</td><td data-label="Detalle">Viaje #14792: programado → en ruta</td></tr>
+              <tr><td data-label="Fecha">08-11 08:55</td><td data-label="Usuario">Paula Rojas</td><td data-label="Acción">Creación</td><td data-label="Detalle">Viaje #14801 programado</td></tr>
+              <tr><td data-label="Fecha">08-11 08:40</td><td data-label="Usuario">Carolina Fuentes</td><td data-label="Acción">Exportación</td><td data-label="Detalle">Reporte gerencial · PDF · octubre</td></tr>
+              <tr><td data-label="Fecha">07-11 18:02</td><td data-label="Usuario">Paula Rojas</td><td data-label="Acción">Cancelación</td><td data-label="Detalle">Viaje #14780 · motivo: obra cerrada</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+</main>
+
+<footer class="mq-body tt-hint">TriTransportes · Evaluación 3 LPW II · Maquetas Hito 1 · Datos ficticios.</footer>
+
+<script>
+// Menú colapsable (celular/tablet): alterna hidden y aria-expanded
+document.querySelectorAll('[data-toggle-menu]').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var menu = document.getElementById(btn.getAttribute('aria-controls'));
+    var abierto = btn.getAttribute('aria-expanded') === 'true';
+    btn.setAttribute('aria-expanded', String(!abierto));
+    btn.querySelector('.tt-sr-only').textContent = abierto ? 'Abrir menú' : 'Cerrar menú';
+    menu.hidden = abierto;
+  });
+});
+
+// Modal nativo: foco atrapado, cierre con Esc y retorno del foco al botón que lo abrió
+document.querySelectorAll('[data-open-modal]').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var dlg = document.getElementById(btn.dataset.openModal);
+    dlg.showModal();
+    dlg.addEventListener('close', function () { btn.focus(); }, { once: true });
+  });
+});
+
+// Validación inmediata del formulario "Programar viaje"
+(function () {
+  var form = document.getElementById('form-viaje');
+  var reglas = [
+    { el: 'v-veh', err: 'v-veh-e', ok: function (v) { return v !== ''; }, msg: 'Vehículo: seleccione el vehículo del viaje.' },
+    { el: 'v-cant', err: 'v-cant-e', ok: function (v) { var n = Number(v.replace(',', '.')); return v !== '' && !isNaN(n) && n >= 0; }, msg: 'Carga: debe ser un número mayor o igual a 0.' }
+  ];
+  function validar(r) {
+    var campo = document.getElementById(r.el), err = document.getElementById(r.err);
+    var bien = r.ok(campo.value.trim());
+    campo.setAttribute('aria-invalid', String(!bien));
+    err.hidden = bien;
+    return bien;
+  }
+  reglas.forEach(function (r) { document.getElementById(r.el).addEventListener('blur', function () { validar(r); }); });
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var fallos = reglas.filter(function (r) { return !validar(r); });
+    var resumen = document.getElementById('resumen'), lista = document.getElementById('resumen-lista');
+    lista.innerHTML = '';
+    if (!fallos.length) { resumen.hidden = true; alert('Viaje guardado (maqueta).'); return; }
+    resumen.querySelector('strong').textContent = 'Revise ' + fallos.length + (fallos.length === 1 ? ' campo' : ' campos') + ' antes de guardar:';
+    fallos.forEach(function (r) {
+      var li = document.createElement('li'), a = document.createElement('a');
+      a.href = '#' + r.el; a.textContent = r.msg;
+      a.addEventListener('click', function (ev) { ev.preventDefault(); document.getElementById(r.el).focus(); });
+      li.appendChild(a); lista.appendChild(li);
+    });
+    resumen.hidden = false;
+    resumen.focus();
+  });
+  form.addEventListener('reset', function () {
+    setTimeout(function () { reglas.forEach(function (r) { document.getElementById(r.el).setAttribute('aria-invalid', 'false'); document.getElementById(r.err).hidden = true; }); document.getElementById('resumen').hidden = true; });
+  });
+})();
+</script>
+</body>
+</html>
