@@ -4,8 +4,10 @@
 #app:not(.tt-app) .tt-sidebar, #app:not(.tt-app) .tt-topbar { display: none !important; }
 .tt-shell { min-width: 0; display: flex; flex-direction: column; min-height: 100vh; }
 #contenido:focus { outline: none; }
-h1:focus { outline: none; }
-h1:focus-visible { outline: 3px solid var(--tt-focus); outline-offset: 4px; }
+/* El h1 recibe el foco por programa al cambiar de vista (para el lector de pantalla); no es un control,
+   así que no se dibuja el anillo de foco (WCAG 2.4.7 aplica a componentes operables). */
+h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus { outline: none; }
+.tt-form-grid .tt-field, .tt-filters .tt-field { align-content: start; }
 
 /* Barra lateral */
 .tt-sidebar .tt-brand { display: block; padding: var(--tt-space-2) var(--tt-space-3) var(--tt-space-4); font-size: var(--tt-fs-lg); }

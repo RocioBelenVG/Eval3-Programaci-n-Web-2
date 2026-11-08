@@ -9,8 +9,8 @@ info:
     cualquier ruta puede responder 400 (cuerpo que no es JSON), 405 (método no permitido, con `Allow`),
     429 (más de 120 solicitudes por minuto por usuario) y 500 (con `request_id` para rastrear el error).
     Toda respuesta incluye el encabezado `X-Request-Id`.
-    Estado de implementación (Hito 2): auth, viajes, guías, cargas, vehículos y mantenciones.
-    Dashboard y reportes se implementan en el Hito 4; IA en el Hito 3.
+    Estado de implementación (Hito 3): auth, viajes, guías, cargas, vehículos, catálogos,
+    mantenciones, salud e IA. Dashboard y reportes se implementan en el Hito 4.
 servers:
   - url: https://trivoxa.cl/TriTransportes/api/v1
     description: Demostración (Hostinger)
@@ -29,6 +29,8 @@ tags:
   - name: Dashboard
   - name: Reportes
   - name: IA
+  - name: Catálogos
+  - name: Sistema
 
 paths:
   /auth/login:
@@ -277,6 +279,59 @@ paths:
               schema: { $ref: '#/components/schemas/Carga' }
         '422': { $ref: '#/components/responses/ValidationError' }
 
+  /health:
+    get:
+      tags: [Sistema]
+      summary: Estado del servicio y de la base de datos (health check de Docker y del pipeline)
+      security: []
+      responses:
+        '200':
+          description: Servicio operativo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+                  db: { type: string, example: ok }
+                  migraciones: { type: integer, example: 7 }
+        '503': { description: Sin conexión con la base de datos }
+
+  /conductores:
+    get:
+      tags: [Catálogos]
+      summary: Conductores activos para programar viajes (Supervisor, Administrador)
+      responses:
+        '200':
+          description: Lista
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: { type: integer }
+                    nombre: { type: string }
+                    licencia_tipo: { type: string }
+                    licencia_vence: { type: string, format: date, nullable: true }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /obras:
+    get:
+      tags: [Catálogos]
+      summary: Obras activas (Supervisor, Administrador, Gerencia)
+      responses:
+        '200': { description: Lista de obras con id, nombre, código y estado }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /equipos:
+    get:
+      tags: [Catálogos]
+      summary: Equipos activos (para cargas de combustible y mantenciones)
+      responses:
+        '200': { description: Lista de equipos con id, código, nombre y horómetro }
+
   /vehiculos:
     get:
       tags: [Flota]
@@ -470,7 +525,12 @@ paths:
   /ia/resumen:
     post:
       tags: [IA]
-      summary: Resumen gerencial en lenguaje natural de los KPIs del período (Gerencia, Supervisor)
+      summary: Resumen gerencial en lenguaje natural de los KPIs del período (Gerencia, Supervisor, Administrador)
+      description: |
+        Calcula los indicadores del período y del período anterior de igual duración y se los envía
+        a Groq (Llama 3.3 70B). Al modelo solo le llegan agregados, nunca datos personales.
+        El período no puede superar 366 días. Límite propio: 10 solicitudes por minuto por usuario.
+        La respuesta del modelo se valida (forma, largo y sin etiquetas HTML) antes de entregarla.
       requestBody:
         required: true
         content:
@@ -496,6 +556,9 @@ paths:
                   resumen: { type: string }
                   recomendaciones: { type: array, items: { type: string } }
                   modelo: { type: string, example: llama-3.3-70b-versatile }
+                  datos:
+                    type: object
+                    description: Indicadores enviados al modelo (periodo_actual y periodo_anterior), para verificar las cifras
         '422': { $ref: '#/components/responses/ValidationError' }
         '429': { $ref: '#/components/responses/TooManyRequests' }
         '502': { $ref: '#/components/responses/BadGateway' }

@@ -1,0 +1,29 @@
+Auditoría automática de accesibilidad · axe-core 4.10.2
+Fecha: 8 de noviembre de 2026 · Navegador: Chromium (panel del navegador de Claude) · Reglas: wcag2a, wcag2aa, wcag21aa, wcag22aa
+Interfaz: /TriTransportes/app/ servida localmente contra una API simulada con datos capturados de la API real.
+
+Vista / estado                                         Infracciones
+#/login (formulario vacío)                             0
+#/viajes (listado con filtros, orden y paginación)     0
+#/viajes/14782 (ficha con acciones de estado)          0
+#/viajes/nuevo (formulario)                            0
+#/cargas (listado y filtros)                           0
+#/mantenciones                                         0
+#/flota (vehículos)                                    0
+#/flota/1 (rendimiento mensual)                        0
+#/ia (formulario)                                      0
+#/ia (resultado del resumen)                           0
+#/no-existe (vista 404)                                0
+Modal "Cancelar viaje" con errores de validación       0
+
+Resultado: 0 infracciones en 12 pantallas y estados (21 reglas aprobadas en el login).
+
+Comprobaciones manuales complementarias (mismo día):
+- 360 px: ninguna vista tiene desplazamiento horizontal (scrollWidth = clientWidth = 360 en las 9 rutas).
+- Controles interactivos de al menos 24 × 24 px (los botones y campos miden 44 px; solo las migas de pan son enlaces en línea).
+- Menú colapsable: aria-expanded cambia, el foco entra al menú y Esc lo cierra y devuelve el foco al botón.
+- Cambio de vista: título del documento actualizado, foco en el h1 y anuncio en la región aria-live.
+- Formularios: error bajo cada campo con aria-invalid y aria-describedby; resumen de errores con enlaces y foco.
+- Modales <dialog>: foco inicial en el primer campo, cierre con Esc y retorno del foco al botón que los abrió.
+- Rol Conductor: menú con 3 opciones; #/ia, #/viajes/nuevo y #/mantenciones muestran la vista "Sin permisos".
+Pendiente (Hito 4): Lighthouse y prueba completa con el lector de pantalla NVDA.

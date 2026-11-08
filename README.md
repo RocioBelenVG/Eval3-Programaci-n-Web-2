@@ -3,13 +3,14 @@
 Sistema web de gestión de **flota, transporte y combustible** para una empresa de transporte de carga (ficticia: TRITRANSPORTES SpA).
 Es el proyecto integrador de la **Evaluación 3 de Lenguaje de Programación Web II**.
 
-> Estado: **Hito 2 — datos y backend**. Migraciones versionadas con Phinx, API REST `/api/v1` con JWT y cuatro roles, máquinas de estado y 63 pruebas automatizadas que pasan ([evidencia](docs/evidencias/hito2/)). La interfaz conectada a la API, Docker y CI/CD se incorporan en el Hito 3 (ver [plan de adaptación](docs/PLAN_ADAPTACION.md)).
+> Estado: **Hito 3 — front end, contenedores e IA**. Interfaz por rol conectada a la API (`/app/`), endpoint de IA `POST /ia/resumen` con Groq, `docker compose up` con cinco servicios y pipeline de GitHub Actions. Las 74 pruebas automatizadas pasan ([evidencia del Hito 2](docs/evidencias/hito2/) y [del Hito 3](docs/evidencias/hito3/)). El dashboard y los reportes se incorporan en el Hito 4 (ver [plan de adaptación](docs/PLAN_ADAPTACION.md)).
 
 ## Documentación
 
 | Documento | Contenido |
 |---|---|
 | Informe técnico (PDF) | `Informe_Tecnico_TriTransportes.pdf`, en la carpeta de entrega: las 11 secciones de la pauta, matriz de cumplimiento y rúbrica autoevaluada |
+| [Evidencia del Hito 3](docs/evidencias/hito3/) | Auditoría axe-core de la interfaz, pruebas de IA y verificación de contenedores |
 | [Evidencia del Hito 2](docs/evidencias/hito2/) | Salida de PHPUnit (testdox y JUnit), estado de las migraciones, verificación de la base y prueba de humo de la API |
 | [01 · Requerimientos](docs/01_requerimientos.md) | Dominio, roles, requerimientos funcionales y no funcionales, historias de usuario, casos de uso y plan de trabajo |
 | [02 · Modelo de datos](docs/02_modelo_datos.md) | Diagrama entidad–relación, diccionario de datos, normalización y respaldo |
@@ -23,14 +24,25 @@ PHP 8.3 · MariaDB 11.8 · Bootstrap 5.3 (personalizado) · Chart.js · FPDF · 
 
 ## Ejecución
 
-### Entorno de demostración
-https://trivoxa.cl/TriTransportes (Apache + PHP + MariaDB, configurado mediante `.env`).
-
-### Local con Docker *(se incorpora en el Hito 3)*
+### Local con Docker (un solo comando)
 ```bash
-cp .env.example .env      # completar los valores
+cp .env.example .env      # cambie las contraseñas y JWT_SECRET; GROQ_API_KEY es opcional
 docker compose up
 ```
+Abra http://localhost:8080 (redirige a la aplicación en `/TriTransportes/app/`). La primera vez, el servicio `migrate` crea el esquema, genera 12 meses de datos sintéticos (unos minutos) y crea las cuentas de demostración.
+
+| Servicio | Imagen | Función |
+|---|---|---|
+| `web` | `nginx:1.27.3-alpine` (etapa `web`) | Front end y estáticos; deriva PHP a `api`. Único puerto publicado: 8080 |
+| `api` | `php:8.3.14-fpm-alpine3.20` (etapa `api`) | API REST y sistema clásico, usuario `www-data` |
+| `db` | `mariadb:11.8.2` | Base de datos en la red interna `backend`, volumen `db-data` |
+| `migrate` | etapa `api` | Auxiliar: migraciones, datos sintéticos y cuentas demo; termina al acabar |
+| `backup` | `mariadb:11.8.2` | Auxiliar: `mariadb-dump` diario comprimido en el volumen `backups`, 14 días de retención |
+
+Redes: `frontend` (solo `web`), `backend` interna sin salida a internet (`db`, `api`, auxiliares) y `egress` (solo `api`, para la IA). Todos los servicios de larga vida tienen *health check* y `restart: unless-stopped`.
+
+### Entorno de demostración
+https://trivoxa.cl/TriTransportes (Apache + PHP + MariaDB en Hostinger, configurado mediante `.env`). La aplicación nueva está en https://trivoxa.cl/TriTransportes/app/ y el contrato en https://trivoxa.cl/TriTransportes/api/docs/.
 
 ### Instalación manual (hosting PHP)
 ```bash
@@ -40,6 +52,33 @@ vendor/bin/phinx migrate -c phinx.php     # crea el esquema (base vacía) y apli
 php database/seed_masivo.php --purgar     # 12 meses de datos sintéticos
 vendor/bin/phinx seed:run -c phinx.php    # cuentas de demostración por rol
 ```
+
+## Interfaz web
+
+Aplicación de una página en `app/` (HTML, CSS y JavaScript nativo, sin frameworks) sobre el sistema de diseño `assets/css/tt-design.css`. Consume solo la API REST con JWT.
+
+- Menú y acciones según el rol; vistas de 403 y 404; estados de carga, vacíos y de error.
+- Listado de viajes con búsqueda, filtros, orden por columna y paginación; ficha con la máquina de estados; formularios con validación inmediata y resumen de errores enlazado a cada campo.
+- Responsive de 360 a 1440 px sin desplazamiento horizontal; tablas apiladas en celular; menú colapsable que se cierra con Esc.
+- Accesibilidad WCAG 2.2 AA: enlace para saltar al contenido, foco visible y gestionado en cada cambio de vista, anuncios con `aria-live` y modales con `<dialog>`. axe-core no encuentra infracciones en ninguna vista ([evidencia](docs/evidencias/hito3/)).
+
+## Integración de IA
+
+`POST /api/v1/ia/resumen` genera un resumen gerencial del período con Groq (Llama 3.3 70B).
+- La clave se lee solo de `GROQ_API_KEY` (variable de entorno). Si falta, el endpoint responde 503 y el resto del sistema sigue funcionando.
+- Entrada validada (fechas, período de 366 días como máximo y enfoque) y límite de 10 solicitudes por minuto por usuario.
+- Tiempo máximo de espera `AI_TIMEOUT` (20 s). Errores del proveedor: 504 por tiempo, 502 por error o respuesta inválida y 503 por límite, siempre con el esquema de error estándar.
+- Al modelo solo le llegan totales del período y del anterior, nunca datos personales. Su respuesta se valida y se muestra como texto.
+- Pruebas con el servicio simulado (`tests/Support/FakeIaClient.php`, `tests/Integration/IaTest.php`).
+
+## CI/CD
+
+`.github/workflows/ci.yml` corre en cada *push* y *pull request*:
+1. **Pruebas:** PHPUnit (unitarias y de integración) contra MariaDB 11.8, con migraciones, datos sintéticos y la prueba de `rollback`.
+2. **Contenedores:** construye las imágenes (la etapa `test` del Dockerfile vuelve a correr las pruebas unitarias), ejecuta `docker compose up` y hace una prueba de humo por HTTP.
+3. **Publicación:** solo en `main` y solo si las etapas anteriores pasan, sube las imágenes `api` y `web` a GitHub Container Registry.
+
+Los secretos de prueba se generan en cada ejecución y se enmascaran en los registros.
 
 ## API REST
 
