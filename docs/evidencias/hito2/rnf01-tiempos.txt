@@ -1,0 +1,12 @@
+RNF01 · Listados paginados en menos de 500 ms (p95) con los 9.708 viajes de TRITRANSPORTES SpA
+Medición: 30 solicitudes HTTPS por consulta con `curl -w %{time_total}` y token de Gerencia,
+ejecutadas desde el propio servidor (no incluyen la latencia de red del cliente). 8 de noviembre de 2026.
+
+Consulta GET /api/v1/viajes?...                               n     p50       p95       máx
+per_page=25                                                  30    29 ms     40 ms     42 ms
+per_page=100&sort=-fecha                                     30    35 ms    194 ms    211 ms
+estado=completado&desde=2026-01-01&hasta=2026-06-30&per_page=50 30 22 ms    32 ms     34 ms
+q=KLPR&per_page=25 (búsqueda de texto)                       30    47 ms     64 ms     64 ms
+page=380&per_page=25&sort=vehiculo (última página)           30    77 ms     97 ms    103 ms
+
+Resultado: cumple. El peor p95 (194 ms, 100 filas por página) queda bajo el umbral de 500 ms.
