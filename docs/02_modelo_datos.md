@@ -1,6 +1,6 @@
 # 02 · Modelo de datos — TriTransportes
 
-Motor: **MariaDB 10.11 / MySQL 8**, InnoDB, `utf8mb4`. El modelo cubre el alcance evaluado: transporte, combustible, flota y seguridad de acceso.
+Motor: **MariaDB 11.8** (la misma versión del servidor de demostración), InnoDB, `utf8mb4`. El modelo cubre el alcance evaluado: transporte, combustible, flota y seguridad de acceso.
 
 ## 1. Diagrama entidad–relación
 

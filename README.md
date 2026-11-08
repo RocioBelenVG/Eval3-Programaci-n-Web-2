@@ -9,6 +9,7 @@ Es el proyecto integrador de la **Evaluación 3 de Lenguaje de Programación Web
 
 | Documento | Contenido |
 |---|---|
+| [Informe técnico](https://claude.ai/artifact/SASKfHSE1JgLPWnPj7p1JS) | Informe con las 11 secciones de la pauta, indicadores reales, matriz de cumplimiento y rúbrica autoevaluada (se exporta a PDF para la entrega) |
 | [01 · Requerimientos](docs/01_requerimientos.md) | Dominio, roles, requerimientos funcionales y no funcionales, historias de usuario, casos de uso y plan de trabajo |
 | [02 · Modelo de datos](docs/02_modelo_datos.md) | Diagrama entidad–relación, diccionario de datos, normalización y respaldo |
 | [03 · Arquitectura](docs/03_arquitectura.md) | Capas, componentes, despliegue, OWASP, decisiones (ADR) y SOLID |
@@ -17,7 +18,7 @@ Es el proyecto integrador de la **Evaluación 3 de Lenguaje de Programación Web
 
 ## Stack
 
-PHP 8.3 · MariaDB 10.11 · Bootstrap 5.3 (personalizado) · Chart.js · FPDF · Groq (Llama 3.3) · Docker · GitHub Actions
+PHP 8.3 · MariaDB 11.8 · Bootstrap 5.3 (personalizado) · Chart.js · FPDF · Groq (Llama 3.3) · Docker · GitHub Actions
 
 ## Ejecución
 

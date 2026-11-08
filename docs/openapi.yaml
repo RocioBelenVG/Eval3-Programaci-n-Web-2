@@ -494,6 +494,11 @@ paths:
         '422': { $ref: '#/components/responses/ValidationError' }
         '429': { $ref: '#/components/responses/TooManyRequests' }
         '502': { $ref: '#/components/responses/BadGateway' }
+        '503':
+          description: El servicio de IA no está configurado (falta GROQ_API_KEY)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
         '504': { $ref: '#/components/responses/GatewayTimeout' }
 
 components:

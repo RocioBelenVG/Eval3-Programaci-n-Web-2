@@ -86,7 +86,7 @@ flowchart TB
         end
         subgraph net_back["red: backend (interna)"]
             APP["app: php:8.3-fpm-alpine<br/>puerto 9000"]
-            DB[("db: mariadb:10.11<br/>puerto 3306, sin exponer")]
+            DB[("db: mariadb:11.8<br/>puerto 3306, sin exponer")]
             PMA["phpmyadmin (solo dev)<br/>8081:80"]
         end
         V1[("volumen db_data")]
@@ -153,6 +153,10 @@ flowchart TB
 ### ADR-05 · Front end renderizado en servidor con fetch
 - **Decisión:** se mantienen las vistas PHP con Bootstrap 5 personalizado. Los listados, formularios y el dashboard consumen la API con `fetch`.
 - **Alternativa descartada:** una SPA en React, porque duplicaría todo el front end en 5 semanas y aumentaría el riesgo en accesibilidad.
+
+### ADR-06 · Patrón Strategy para los exportadores
+- **Decisión:** una interfaz `Exporter` con tres implementaciones (`XlsxExporter`, `PdfExporter`, `CsvExporter`); el servicio de reportes elige la estrategia según el formato pedido.
+- **Alternativa descartada:** un método con `switch` por formato, porque cada formato nuevo obligaría a modificarlo.
 
 ## 7. Principios SOLID visibles en el código
 

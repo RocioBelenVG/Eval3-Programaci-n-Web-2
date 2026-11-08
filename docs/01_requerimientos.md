@@ -64,7 +64,7 @@ Prioridad MoSCoW: **M** = Must, **S** = Should, **C** = Could.
 
 | ID | Atributo | Requerimiento verificable | Cómo se verifica |
 |---|---|---|---|
-| RNF01 | Rendimiento | Los listados paginados responden en < 500 ms (p95) con 15.000 viajes | Medición con `curl -w` y log de tiempos |
+| RNF01 | Rendimiento | Los listados paginados responden en < 500 ms (p95) con los 9.700 viajes de una empresa (14.792 en la base) | Medición con `curl -w` y log de tiempos |
 | RNF02 | Rendimiento | El dashboard carga en < 2 s con 12 meses de datos | Lighthouse y pestaña Network |
 | RNF03 | Seguridad | Todo endpoint, salvo `/auth/login`, exige un JWT válido; los tokens expiran en 60 min | Pruebas de integración (401) |
 | RNF04 | Seguridad | Mitigar 5 o más riesgos del OWASP API Top 10 (ver arquitectura) | Pruebas y revisión |
