@@ -33,7 +33,9 @@ final class FlotaTest extends ApiTestCase
 
         $this->assertError($this->request('POST', '/cargas', $base + ['litros' => 0], [], $t), 422, 'VALIDATION_ERROR');
         $this->assertError($this->request('POST', '/cargas', ['tipo_unidad' => 'equipo', 'fecha' => date('Y-m-d'), 'litros' => 100], [], $t), 422, 'VALIDATION_ERROR');
-        $this->assertError($this->request('POST', '/cargas', $base + ['litros' => 100, 'fecha' => date('Y-m-d', strtotime('+3 days'))], [], $t), 422, 'VALIDATION_ERROR');
+        $futura = $this->request('POST', '/cargas', ['litros' => 100, 'fecha' => date('Y-m-d', strtotime('+3 days'))] + $base, [], $t);
+        $this->assertError($futura, 422, 'VALIDATION_ERROR');
+        $this->assertSame('fecha', $futura->data()['error']['details'][0]['field']);
 
         $this->request('POST', '/cargas', $base + ['litros' => 100, 'odometro' => 950000], [], $t);
         $r = $this->request('POST', '/cargas', $base + ['litros' => 100, 'odometro' => 949000], [], $t);
