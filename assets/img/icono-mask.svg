@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="TriTransportes">
+  <defs>
+    <linearGradient id="ambarMask" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fbbf24"/>
+      <stop offset="1" stop-color="#d97706"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Versión maskable: la marca queda dentro de la zona segura (80%) -->
+  <rect width="512" height="512" fill="#0f172a"/>
+  <path d="M166 176 H346 V228 H286 V352 H226 V228 H166 Z" fill="url(#ambarMask)"/>
+</svg>

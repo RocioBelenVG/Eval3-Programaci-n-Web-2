@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="TriTransportes">
+  <defs>
+    <linearGradient id="fondo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="ambar" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fbbf24"/>
+      <stop offset="1" stop-color="#d97706"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" rx="96" fill="url(#fondo)"/>
+
+  <!-- Perfil de terreno: alude a movimiento de tierra y áridos -->
+  <path d="M64 372 L168 268 L232 332 L344 208 L448 312 L448 404 L64 404 Z"
+        fill="#1e3a5f" opacity="0.55"/>
+
+  <!-- Letra T de TriTransportes -->
+  <path d="M146 150 H366 V206 H298 V368 H214 V206 H146 Z" fill="url(#ambar)"/>
+
+  <!-- Punto de estado operacional -->
+  <circle cx="386" cy="140" r="34" fill="#22c55e"/>
+</svg>

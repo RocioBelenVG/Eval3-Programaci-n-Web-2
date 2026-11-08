@@ -1,0 +1,11 @@
+.env
+config/secrets.php
+vendor/
+node_modules/
+logs/*
+!logs/.htaccess
+uploads/*/*
+exports/*
+*.bak*
+.phpunit.result.cache
+coverage/

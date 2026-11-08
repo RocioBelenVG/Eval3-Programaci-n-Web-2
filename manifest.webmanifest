@@ -1,0 +1,54 @@
+{
+  "name": "TriTransportes",
+  "short_name": "TriTransportes",
+  "description": "Gestión de flota, transporte y combustible",
+  "lang": "es-CL",
+  "dir": "ltr",
+  "start_url": "modules/dashboard/",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "categories": [
+    "business",
+    "productivity",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "assets/img/icono.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/img/icono-mask.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Registrar carga de combustible",
+      "short_name": "Carga",
+      "url": "modules/combustible/carga"
+    },
+    {
+      "name": "Nuevo parte de faena",
+      "short_name": "Parte",
+      "url": "modules/faena/parte"
+    },
+    {
+      "name": "Nueva guía de despacho",
+      "short_name": "Guía",
+      "url": "modules/transporte/guia"
+    },
+    {
+      "name": "Reportar incidente",
+      "short_name": "Incidente",
+      "url": "modules/seguridad/incidente"
+    }
+  ]
+}
