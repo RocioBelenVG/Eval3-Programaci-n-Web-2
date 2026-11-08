@@ -1,0 +1,75 @@
+Auth (TriTransportes\Tests\Integration\Auth)
+ [x] El login correcto entrega un jwt y los datos del usuario
+ [x] Una contrasena incorrecta responde 401 sin revelar si el correo existe
+ [x] El login valida los datos de entrada
+ [x] Tras cinco intentos fallidos el login responde 429 con retry after
+ [x] Un rol fuera del alcance no obtiene token
+ [x] Las rutas protegidas exigen un token valido
+ [x] Un usuario desactivado pierde el acceso aunque su token siga vigente
+ [x] Una ruta inexistente o un metodo no permitido usan el esquema de error
+
+Estados (TriTransportes\Tests\Unit\Estados)
+ [x] La maquina de estados del viaje solo acepta las transiciones definidas with data set "programado>programado"
+ [x] La maquina de estados del viaje solo acepta las transiciones definidas with data set "programado>en_ruta"
+ [x] La maquina de estados del viaje solo acepta las transiciones definidas with data set "programado>completado"
+ [x] La maquina de estados del viaje solo acepta las transiciones definidas with data set "programado>cancelado"
+ [x] La maquina de estados del viaje solo acepta las transiciones definidas with data set "en_ruta>programado"
+ [x] La maquina de estados del viaje solo acepta las transiciones definidas with data set "en_ruta>en_ruta"
+ [x] La maquina de estados del viaje solo acepta las transiciones definidas with data set "en_ruta>completado"
+ [x] La maquina de estados del viaje solo acepta las transiciones definidas with data set "en_ruta>cancelado"
+ [x] La maquina de estados del viaje solo acepta las transiciones definidas with data set "completado>programado"
+ [x] La maquina de estados del viaje solo acepta las transiciones definidas with data set "completado>en_ruta"
+ [x] La maquina de estados del viaje solo acepta las transiciones definidas with data set "completado>completado"
+ [x] La maquina de estados del viaje solo acepta las transiciones definidas with data set "completado>cancelado"
+ [x] La maquina de estados del viaje solo acepta las transiciones definidas with data set "cancelado>programado"
+ [x] La maquina de estados del viaje solo acepta las transiciones definidas with data set "cancelado>en_ruta"
+ [x] La maquina de estados del viaje solo acepta las transiciones definidas with data set "cancelado>completado"
+ [x] La maquina de estados del viaje solo acepta las transiciones definidas with data set "cancelado>cancelado"
+ [x] Completado y cancelado son estados finales
+ [x] El conductor no puede cancelar pero si iniciar y completar
+ [x] La mantencion avanza sin saltos ni retrocesos
+ [x] Los roles heredados se traducen o quedan fuera de la api
+
+Flota (TriTransportes\Tests\Integration\Flota)
+ [x] El conductor registra una carga de combustible y se calcula el costo
+ [x] Las reglas de combustible se validan en el servidor
+ [x] El check de la base rechaza lo que la api tambien rechaza
+ [x] El trigger de la base impide una carga de vehiculo sin vehiculo
+ [x] El listado de vehiculos busca por patente
+ [x] El rendimiento mensual entrega km por litro y esta restringido por rol
+ [x] La mantencion avanza pendiente en proceso completada
+ [x] Una empresa no ve datos de otra
+
+Jwt (TriTransportes\Tests\Unit\Jwt)
+ [x] Un token emitido se decodifica con sus claims
+ [x] Un token expirado se rechaza
+ [x] Una firma alterada se rechaza
+ [x] Un token firmado con otra clave se rechaza
+ [x] El algoritmo none se rechaza
+ [x] Un texto que no es jwt se rechaza
+ [x] Una clave corta no se acepta
+
+Validator (TriTransportes\Tests\Unit\Validator)
+ [x] Convierte los tipos y descarta los campos no declarados
+ [x] Junta todos los errores en un solo 422
+ [x] Valida el digito verificador del rut
+ [x] Rechaza horas y enteros mal formados
+ [x] La paginacion respeta los limites del contrato
+
+Viajes (TriTransportes\Tests\Integration\Viajes)
+ [x] El supervisor programa un viaje y queda auditado
+ [x] El conductor y la gerencia no pueden programar viajes
+ [x] Programar un viaje valida campos y referencias
+ [x] No se programa un viaje con la licencia del conductor vencida
+ [x] El flujo completo programado en ruta completado actualiza el odometro
+ [x] Una transicion no permitida responde 409
+ [x] Completar exige km fin mayor o igual al inicial
+ [x] Cancelar exige motivo y el conductor no puede cancelar
+ [x] El conductor solo ve y opera sus propios viajes
+ [x] El listado pagina filtra y ordena
+ [x] La busqueda de texto no permite inyeccion sql
+ [x] Solo se modifica un viaje programado
+ [x] Solo el administrador elimina y solo viajes programados
+ [x] La guia de despacho solo se emite para un viaje completado y con numero unico
+ [x] Un cuerpo que no es json responde 400
+

@@ -1,0 +1,28 @@
+Prueba de humo de https://trivoxa.cl/TriTransportes/api/v1 — 2026-11-08 21:10 UTC
+
+### POST /auth/login (Supervisor) → 200
+{"token":"eyJhbGciOiJIUzI1…","expires_in":3600,"usuario":{"id":315,"nombre":"Carlos Contreras","email":"supervisor@tritransportes.cl","rol":"Supervisor"}}
+
+### GET /viajes sin token → 401
+{"error":{"code":"NO_AUTENTICADO","message":"Falta el encabezado Authorization: Bearer <token>.","request_id":"150f8cad5a950304"}} [HTTP 401]
+
+### GET /viajes?estado=completado&per_page=2&sort=-fecha (Supervisor) → 200 paginado
+{"meta":{"page":1,"per_page":2,"total":9120,"total_pages":4560},"primero":{"id":14781,"estado":"completado","fecha":"2026-11-07","vehiculo":{"id":12,"patente":"KLPR89"},"conductor":{"id":10,"nombre":"Carlos Lagos"},"transiciones_permitidas":[]}}
+
+### GET /viajes (Conductor) → solo sus viajes
+{"total":1258,"conductor":{"id":1,"nombre":"Manuel Tapia"}}
+
+### POST /viajes (Conductor) → 403
+{"error":{"code":"SIN_PERMISO","message":"Su rol no tiene permiso para esta acción.","request_id":"c8b12b9e17dd2536"}} [HTTP 403]
+
+### POST /viajes con datos inválidos (Supervisor) → 422
+{"error":{"code":"VALIDATION_ERROR","message":"Los datos enviados no son válidos.","details":[{"field":"vehiculo_id","message":"Este campo es obligatorio."},{"field":"conductor_id","message":"Este campo es obligatorio."},{"field":"fecha","message":"Debe ser una fecha válida con formato AAAA-MM-DD."},{"field":"origen","message":"Este campo es obligatorio."},{"field":"destino","message":"Este campo es obligatorio."},{"field":"unidad","message":"Valor no permitido. Opciones: m3, ton, viaje."}],"request_id":"9cb20c8f0a5be20a"}} [HTTP 422]
+
+### PATCH /viajes/14781/estado completado → en_ruta → 409
+{"error":{"code":"TRANSICION_INVALIDA","message":"No se puede pasar de 'completado' a 'en_ruta'. 'completado' es un estado final.","request_id":"fe82d4b10752924e"}} [HTTP 409]
+
+### GET /vehiculos/1/rendimiento?desde=2026-08-01 (Supervisor) → 200
+[{"mes":"2026-08","km":4258,"litros":1918.46,"km_por_litro":2.22,"costo":1937644.6},{"mes":"2026-09","km":4106,"litros":1457.52,"km_por_litro":2.82,"costo":1476467.76},{"mes":"2026-10","km":3959,"litros":1532.1,"km_por_litro":2.58,"costo":1619429.7}]
+
+### GET /mantenciones?estado=pendiente&per_page=1 (Conductor) → 403
+{"error":{"code":"SIN_PERMISO","message":"Su rol no tiene permiso para esta acción.","request_id":"aac085d382b83c9d"}} [HTTP 403]

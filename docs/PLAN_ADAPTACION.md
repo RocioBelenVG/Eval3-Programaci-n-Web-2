@@ -66,11 +66,11 @@ Dominio                                      →  /src/Domain    (entidades, enu
 - [ ] Repositorio en GitHub con los integrantes del equipo.
 
 ### Hito 2 — Semana 12: datos y backend
-- [ ] Rebranding de los datos a una empresa ficticia; el seed sintético conserva 12 meses de historia.
-- [ ] Migraciones Phinx con `CHECK`, `UNIQUE`, índices y vistas para reportes.
-- [ ] `/src` con Domain, Repository, Service, contenedor de inyección y API `/api/v1` con JWT.
-- [ ] Máquina de estados de viajes y mantenciones.
-- [ ] Pruebas PHPUnit y límite de tasa.
+- [x] Rebranding de los datos a una empresa ficticia; el seed sintético conserva 12 meses de historia.
+- [x] Migraciones Phinx con `CHECK`, `UNIQUE`, índices, triggers y vistas para reportes (7 migraciones, reversibles).
+- [x] `/src` con Domain, Repository, Service, contenedor de inyección y API `/api/v1` con JWT.
+- [x] Máquina de estados de viajes y mantenciones.
+- [x] Pruebas PHPUnit (63) y límite de tasa. Evidencia en `docs/evidencias/hito2/`.
 
 ### Hito 3 — Semana 13: front end, contenedores e IA
 - [ ] Listados y formularios consumiendo la API (búsqueda, filtros, orden y paginación).

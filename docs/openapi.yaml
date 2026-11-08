@@ -5,7 +5,12 @@ info:
   description: |
     API REST de TriTransportes: gestión de viajes, combustible, flota, reportes e IA.
     Todas las rutas, salvo `POST /auth/login`, requieren `Authorization: Bearer <JWT>`.
-    Los errores siguen siempre el esquema `Error`.
+    Los errores siguen siempre el esquema `Error`. Además de los códigos de cada operación,
+    cualquier ruta puede responder 400 (cuerpo que no es JSON), 405 (método no permitido, con `Allow`),
+    429 (más de 120 solicitudes por minuto por usuario) y 500 (con `request_id` para rastrear el error).
+    Toda respuesta incluye el encabezado `X-Request-Id`.
+    Estado de implementación (Hito 2): auth, viajes, guías, cargas, vehículos y mantenciones.
+    Dashboard y reportes se implementan en el Hito 4; IA en el Hito 3.
 servers:
   - url: https://trivoxa.cl/TriTransportes/api/v1
     description: Demostración (Hostinger)
@@ -682,7 +687,12 @@ components:
         vehiculo_id: { type: integer, nullable: true }
         equipo_id: { type: integer, nullable: true }
         fecha: { type: string, format: date }
-        litros: { type: number, exclusiveMinimum: true, minimum: 0, maximum: 600 }
+        litros:
+          type: number
+          exclusiveMinimum: true
+          minimum: 0
+          maximum: 1500
+          description: Máximo 600 L si `tipo_unidad` es `vehiculo` (estanque de camión) y 1.500 L si es `equipo`.
         precio_litro: { type: number, exclusiveMinimum: true, minimum: 0 }
         odometro: { type: integer, minimum: 0 }
         horometro: { type: number, minimum: 0 }

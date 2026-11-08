@@ -188,17 +188,23 @@ Las demás tablas de apoyo son `empresas`, `trabajadores`, `clientes`, `obras`, 
 - **3FN:** los datos del conductor (nombre, RUT) viven en `trabajadores` y no se repiten en `viajes`; las categorías y los proveedores están en catálogos propios.
 - **Desnormalización justificada:** `guias_despacho` copia `vehiculo_id`, `conductor_id`, `cantidad` y `origen/destino` del viaje, porque la guía es un **documento legal** que debe conservar los valores del momento en que se emitió, aunque el viaje cambie después.
 
-## 4. Mejoras planificadas (migraciones del Hito 2)
+## 4. Migraciones del Hito 2 (aplicadas el 8 de noviembre de 2026)
 
 | Migración | Cambio | Motivo |
 |---|---|---|
-| `20261110_checks_viajes` | CHECK de km, horas y cantidad | Validación en el tercer nivel |
-| `20261110_checks_combustible` | CHECK de litros, precio y exclusividad de vehículo o equipo | Integridad |
-| `20261110_check_vehiculos` | CHECK de año y patente | Integridad |
-| `20261111_vistas_reportes` | `v_viajes_detalle`, `v_rendimiento_mensual`, `v_kpi_mensual` | Reportes y dashboard |
-| `20261111_indices` | `(empresa_id, estado, fecha)` en viajes y `(vehiculo_id, fecha)` en cargas | RNF01: filtros por estado y rendimiento |
+| `20261108000000_base` | Esquema heredado; solo se ejecuta en una base vacía | Mismo punto de partida en todo ambiente |
+| `20261108000100_checks_viajes` | CHECK de km, horas y cantidad | Validación en el tercer nivel |
+| `20261108000200_checks_combustible` | CHECK de litros, precio y horómetro; triggers de exclusividad vehículo/equipo | Integridad |
+| `20261108000300_checks_flota` | CHECK de año y patente; costo de mantención ≥ 0 | Integridad |
+| `20261108000400_indices` | `(empresa_id, estado, fecha)` en viajes, `(vehiculo_id, fecha)` en cargas, `UNIQUE(empresa_id, numero_guia)` | RNF01 y unicidad de la guía |
+| `20261108000500_vistas_reportes` | `v_viajes_detalle`, `v_rendimiento_mensual`, `v_kpi_mensual` | Reportes y dashboard |
+| `20261108000600_rate_limits` | Tabla de contadores del límite de tasa | Protección de la API |
 
-Las migraciones se gestionan con **Phinx**. El esquema actual se toma como migración base (`00000000_base`), y cada cambio posterior es una migración versionada con `up()` y `down()`.
+Las migraciones se gestionan con **Phinx**, cada una con `up()` y `down()`. En el servidor se probaron revirtiéndolas todas y volviéndolas a aplicar.
+
+**Dos ajustes que salieron de revisar los datos antes de migrar:**
+- El tope de 600 L era demasiado bajo para los equipos: 16 cargas de excavadoras y cargadores tienen entre 600 y 807 L. Por eso el tope de 600 L rige solo para camiones, y para equipos el máximo es 1.500 L.
+- MariaDB no acepta un CHECK sobre `vehiculo_id` ni `equipo_id`, porque tienen una clave foránea `ON DELETE SET NULL` (error 1901). La exclusividad vehículo/equipo se asegura con los triggers `trg_cc_unidad_ins` y `trg_cc_unidad_upd`.
 
 ## 5. Respaldo y restauración
 

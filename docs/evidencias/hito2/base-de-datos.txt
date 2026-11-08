@@ -1,0 +1,44 @@
+Verificación en la base (2026-11-08 18:10)
+
+Restricciones CHECK:
+  auditoria.datos_antes: json_valid(`datos_antes`)
+  auditoria.datos_despues: json_valid(`datos_despues`)
+  cargas_combustible.chk_cc_horometro: `horometro` is null or `horometro` >= 0
+  cargas_combustible.chk_cc_litros: `litros` > 0 and `litros` <= 1500 and (`tipo_unidad` = 'equipo' or `litros` <= 600)
+  cargas_combustible.chk_cc_precio: `precio_litro` is null or `precio_litro` > 0
+  mantenciones.chk_mant_costo: `costo_total` is null or `costo_total` >= 0
+  vehiculos.chk_veh_anio: `anio` is null or `anio` between 1980 and 2100
+  vehiculos.chk_veh_patente: `patente` regexp '^([A-Z]{4}[0-9]{2}|[A-Z]{2}[0-9]{4})$'
+  viajes.chk_viajes_cantidad: `cantidad` is null or `cantidad` >= 0
+  viajes.chk_viajes_horas: `hora_llegada` is null or `hora_salida` is null or `hora_llegada` >= `hora_salida`
+  viajes.chk_viajes_km: `km_fin` is null or `km_inicio` is null or `km_fin` = 0 or `km_fin` >= `km_inicio`
+
+Triggers:
+  trg_cc_unidad_ins (INSERT ON cargas_combustible)
+  trg_cc_unidad_upd (UPDATE ON cargas_combustible)
+
+Índices nuevos:
+  cargas_combustible.idx_cc_veh_fecha (vehiculo_id,fecha)
+  guias_despacho.uq_guia_emp_numero (empresa_id,numero_guia) UNIQUE
+  viajes.idx_viajes_emp_estado_fecha (empresa_id,estado,fecha)
+
+Vistas:
+  v_rendimiento_mensual: 303 filas
+  v_viajes_detalle: 14792 filas
+  v_kpi_mensual: 32 filas
+
+Volumen de datos de prueba:
+  viajes                14792
+  guias_despacho         9189
+  cargas_combustible     3283
+  mantenciones            230
+  vehiculos                19
+  equipos                  21
+  conductores              15
+  usuarios                  7
+
+Cuentas por rol para la API:
+  Administrador General: admin@tritransportes.cl
+  Conductor: conductor@tritransportes.cl
+  Gerencia: gerencia@tritransportes.cl
+  Supervisor: supervisor@tritransportes.cl

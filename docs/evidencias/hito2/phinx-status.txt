@@ -1,0 +1,21 @@
+Phinx by CakePHP - https://phinx.org. 0.16.12
+
+using config file phinx.php
+using config parser php
+using migration paths 
+ - /home/u195628024/domains/trivoxa.cl/public_html/TriTransportes/database/migrations
+using seed paths 
+ - /home/u195628024/domains/trivoxa.cl/public_html/TriTransportes/database/seeds
+warning no environment specified, defaulting to: app
+ordering by creation time
+
+ Status  [Migration ID]  Started              Finished             Migration Name 
+----------------------------------------------------------------------------------
+     up  20261108000000  2026-11-08 18:08:17  2026-11-08 18:08:17  Base
+     up  20261108000100  2026-11-08 18:09:04  2026-11-08 18:09:04  ChecksViajes
+     up  20261108000200  2026-11-08 18:09:04  2026-11-08 18:09:04  ChecksCombustible
+     up  20261108000300  2026-11-08 18:09:04  2026-11-08 18:09:04  ChecksFlota
+     up  20261108000400  2026-11-08 18:09:04  2026-11-08 18:09:04  Indices
+     up  20261108000500  2026-11-08 18:09:04  2026-11-08 18:09:04  VistasReportes
+     up  20261108000600  2026-11-08 18:09:04  2026-11-08 18:09:04  RateLimits
+

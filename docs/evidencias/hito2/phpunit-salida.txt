@@ -1,0 +1,85 @@
+PHPUnit 11.5.57 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.3.36
+Configuration: /home/u195628024/domains/trivoxa.cl/public_html/TriTransportes/phpunit.xml.dist
+
+...............................................................   63 / 63 (100%)
+
+Time: 00:00.420, Memory: 6.00 MB
+
+Auth (TriTransportes\Tests\Integration\Auth)
+ ✔ El login correcto entrega un jwt y los datos del usuario
+ ✔ Una contrasena incorrecta responde 401 sin revelar si el correo existe
+ ✔ El login valida los datos de entrada
+ ✔ Tras cinco intentos fallidos el login responde 429 con retry after
+ ✔ Un rol fuera del alcance no obtiene token
+ ✔ Las rutas protegidas exigen un token valido
+ ✔ Un usuario desactivado pierde el acceso aunque su token siga vigente
+ ✔ Una ruta inexistente o un metodo no permitido usan el esquema de error
+
+Estados (TriTransportes\Tests\Unit\Estados)
+ ✔ La maquina de estados del viaje solo acepta las transiciones definidas with data set "programado>programado"
+ ✔ La maquina de estados del viaje solo acepta las transiciones definidas with data set "programado>en_ruta"
+ ✔ La maquina de estados del viaje solo acepta las transiciones definidas with data set "programado>completado"
+ ✔ La maquina de estados del viaje solo acepta las transiciones definidas with data set "programado>cancelado"
+ ✔ La maquina de estados del viaje solo acepta las transiciones definidas with data set "en_ruta>programado"
+ ✔ La maquina de estados del viaje solo acepta las transiciones definidas with data set "en_ruta>en_ruta"
+ ✔ La maquina de estados del viaje solo acepta las transiciones definidas with data set "en_ruta>completado"
+ ✔ La maquina de estados del viaje solo acepta las transiciones definidas with data set "en_ruta>cancelado"
+ ✔ La maquina de estados del viaje solo acepta las transiciones definidas with data set "completado>programado"
+ ✔ La maquina de estados del viaje solo acepta las transiciones definidas with data set "completado>en_ruta"
+ ✔ La maquina de estados del viaje solo acepta las transiciones definidas with data set "completado>completado"
+ ✔ La maquina de estados del viaje solo acepta las transiciones definidas with data set "completado>cancelado"
+ ✔ La maquina de estados del viaje solo acepta las transiciones definidas with data set "cancelado>programado"
+ ✔ La maquina de estados del viaje solo acepta las transiciones definidas with data set "cancelado>en_ruta"
+ ✔ La maquina de estados del viaje solo acepta las transiciones definidas with data set "cancelado>completado"
+ ✔ La maquina de estados del viaje solo acepta las transiciones definidas with data set "cancelado>cancelado"
+ ✔ Completado y cancelado son estados finales
+ ✔ El conductor no puede cancelar pero si iniciar y completar
+ ✔ La mantencion avanza sin saltos ni retrocesos
+ ✔ Los roles heredados se traducen o quedan fuera de la api
+
+Flota (TriTransportes\Tests\Integration\Flota)
+ ✔ El conductor registra una carga de combustible y se calcula el costo
+ ✔ Las reglas de combustible se validan en el servidor
+ ✔ El check de la base rechaza lo que la api tambien rechaza
+ ✔ El trigger de la base impide una carga de vehiculo sin vehiculo
+ ✔ El listado de vehiculos busca por patente
+ ✔ El rendimiento mensual entrega km por litro y esta restringido por rol
+ ✔ La mantencion avanza pendiente en proceso completada
+ ✔ Una empresa no ve datos de otra
+
+Jwt (TriTransportes\Tests\Unit\Jwt)
+ ✔ Un token emitido se decodifica con sus claims
+ ✔ Un token expirado se rechaza
+ ✔ Una firma alterada se rechaza
+ ✔ Un token firmado con otra clave se rechaza
+ ✔ El algoritmo none se rechaza
+ ✔ Un texto que no es jwt se rechaza
+ ✔ Una clave corta no se acepta
+
+Validator (TriTransportes\Tests\Unit\Validator)
+ ✔ Convierte los tipos y descarta los campos no declarados
+ ✔ Junta todos los errores en un solo 422
+ ✔ Valida el digito verificador del rut
+ ✔ Rechaza horas y enteros mal formados
+ ✔ La paginacion respeta los limites del contrato
+
+Viajes (TriTransportes\Tests\Integration\Viajes)
+ ✔ El supervisor programa un viaje y queda auditado
+ ✔ El conductor y la gerencia no pueden programar viajes
+ ✔ Programar un viaje valida campos y referencias
+ ✔ No se programa un viaje con la licencia del conductor vencida
+ ✔ El flujo completo programado en ruta completado actualiza el odometro
+ ✔ Una transicion no permitida responde 409
+ ✔ Completar exige km fin mayor o igual al inicial
+ ✔ Cancelar exige motivo y el conductor no puede cancelar
+ ✔ El conductor solo ve y opera sus propios viajes
+ ✔ El listado pagina filtra y ordena
+ ✔ La busqueda de texto no permite inyeccion sql
+ ✔ Solo se modifica un viaje programado
+ ✔ Solo el administrador elimina y solo viajes programados
+ ✔ La guia de despacho solo se emite para un viaje completado y con numero unico
+ ✔ Un cuerpo que no es json responde 400
+
+OK (63 tests, 377 assertions)
