@@ -128,6 +128,33 @@ jobs:
           test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/TriTransportes/.env)" = 404
           echo "Prueba de humo OK"
 
+      - name: Prueba de respaldo y restauración (RNF07, menos de 15 minutos)
+        run: |
+          set -a; . ./.env; set +a
+          docker compose exec -T -e BACKUP_UNA_VEZ=1 backup sh /backup.sh
+          ARCHIVO=$(docker compose exec -T backup sh -c 'ls -t /backups/*.sql.gz | head -1' | tr -d '\r')
+          RESTORE_PASS=$(openssl rand -hex 16); echo "::add-mask::$RESTORE_PASS"
+          docker run -d --name restaurada --network tritransportes_backend \
+            -e MARIADB_ROOT_PASSWORD="$RESTORE_PASS" -e MARIADB_DATABASE=restaurada mariadb:11.8.2
+          until docker exec restaurada healthcheck.sh --connect --innodb_initialized 2>/dev/null; do sleep 2; done
+          INICIO=$(date +%s)
+          docker compose exec -T backup sh -c "gunzip < $ARCHIVO" | docker exec -i restaurada mariadb -uroot -p"$RESTORE_PASS" restaurada
+          DURACION=$(( $(date +%s) - INICIO ))
+          for t in viajes cargas_combustible guias_despacho mantenciones usuarios; do
+            A=$(docker compose exec -T db mariadb -uroot -p"$DB_ROOT_PASSWORD" -N -e "SELECT COUNT(*) FROM \`$DB_NAME\`.$t" | tr -d '\r')
+            B=$(docker exec restaurada mariadb -uroot -p"$RESTORE_PASS" -N -e "SELECT COUNT(*) FROM restaurada.$t")
+            echo "$t: original=$A restaurada=$B"; test "$A" = "$B"
+          done
+          echo "Restauración de $ARCHIVO verificada en ${DURACION} s"
+          test "$DURACION" -lt 900
+          docker rm -f restaurada
+
+      - name: Reversión de migraciones dentro de los contenedores
+        run: |
+          docker compose run --rm migrate vendor/bin/phinx rollback -c phinx.php -t 20261108000400
+          docker compose run --rm migrate vendor/bin/phinx migrate -c phinx.php
+          curl -fsS http://localhost:8080/TriTransportes/api/v1/health
+
       - name: Registros si algo falló
         if: failure()
         run: docker compose logs --no-color --tail=200

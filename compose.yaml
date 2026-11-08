@@ -21,6 +21,7 @@ x-app-env: &app-env
   GROQ_API_KEY: ${GROQ_API_KEY:-}
   AI_TIMEOUT: ${AI_TIMEOUT:-20}
   DEMO_PASSWORD: ${DEMO_PASSWORD}
+  SEED_DEMO: ${SEED_DEMO:-1}
 
 services:
   db:
