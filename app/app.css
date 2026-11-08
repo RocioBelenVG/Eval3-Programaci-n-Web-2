@@ -1,0 +1,65 @@
+/* Complementos de la aplicación sobre tt-design.css (mismos tokens). */
+
+/* Sin sesión: sin menú ni barra superior */
+#app:not(.tt-app) .tt-sidebar, #app:not(.tt-app) .tt-topbar { display: none !important; }
+.tt-shell { min-width: 0; display: flex; flex-direction: column; min-height: 100vh; }
+#contenido:focus { outline: none; }
+h1:focus { outline: none; }
+h1:focus-visible { outline: 3px solid var(--tt-focus); outline-offset: 4px; }
+
+/* Barra lateral */
+.tt-sidebar .tt-brand { display: block; padding: var(--tt-space-2) var(--tt-space-3) var(--tt-space-4); font-size: var(--tt-fs-lg); }
+.tt-user { margin-top: var(--tt-space-6); padding: var(--tt-space-3); border-top: 1px solid var(--tt-navy-700); color: var(--tt-slate-100); }
+.tt-user p { margin-bottom: var(--tt-space-3); }
+.tt-user span { color: var(--tt-slate-300); font-size: var(--tt-fs-sm); }
+@media (max-width: 63.99em) {
+  .tt-sidebar:not([hidden]) { position: fixed; inset: 56px 0 0 0; z-index: 60; overflow-y: auto; }
+}
+@media (min-width: 64em) { .tt-topbar { display: none; } }
+
+/* Login */
+.tt-login { display: grid; place-items: center; min-height: 100vh; padding: var(--tt-space-4); }
+.tt-login .tt-card { width: min(26rem, 100%); }
+.tt-brand--lg { font-size: var(--tt-fs-xl); margin-bottom: var(--tt-space-4); }
+
+/* Encabezado de página y acciones */
+.tt-page-head h1 { margin: 0; }
+.tt-acciones { display: flex; flex-wrap: wrap; gap: var(--tt-space-2); }
+.tt-error-code { font-size: var(--tt-fs-3xl); font-weight: var(--tt-fw-bold); color: var(--tt-text-2); margin: 0; }
+.tt-empty .tt-btn { margin-top: var(--tt-space-2); }
+
+/* Ficha del viaje */
+.tt-ficha { display: grid; grid-template-columns: 1fr; gap: var(--tt-space-3) var(--tt-space-5); margin: 0; }
+.tt-ficha div { border-bottom: 1px solid var(--tt-divider); padding-bottom: var(--tt-space-2); }
+.tt-ficha dt { font-size: var(--tt-fs-sm); color: var(--tt-text-2); font-weight: var(--tt-fw-semibold); }
+.tt-ficha dd { margin: 0; font-size: var(--tt-fs-md); overflow-wrap: anywhere; }
+@media (min-width: 48em) { .tt-ficha { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 80em) { .tt-ficha { grid-template-columns: repeat(3, 1fr); } }
+
+/* Filtros: el botón ocupa su fila en celular */
+.tt-filters .tt-btn { width: 100%; }
+@media (min-width: 64em) { .tt-filters .tt-btn { width: auto; } }
+.tt-filters--3 { grid-template-columns: 1fr; }
+@media (min-width: 48em) { .tt-filters--3 { grid-template-columns: repeat(3, 1fr); } }
+
+/* Tablas: enlaces de fila con objetivo táctil suficiente */
+.tt-table a { display: inline-flex; align-items: center; min-height: 24px; font-weight: var(--tt-fw-semibold); }
+.tt-table td .tt-btn { white-space: nowrap; }
+
+/* Toasts */
+.tt-toasts { position: fixed; right: var(--tt-space-4); bottom: var(--tt-space-4); z-index: 100; display: grid; gap: var(--tt-space-2); width: min(24rem, calc(100% - 2rem)); }
+.tt-toast { box-shadow: var(--tt-shadow-2); margin: 0; }
+
+/* IA */
+.tt-ia-texto { font-size: var(--tt-fs-lg); line-height: 1.6; }
+.tt-ia-recs { padding-left: var(--tt-space-5); }
+.tt-ia-recs li { margin-bottom: var(--tt-space-2); }
+.tt-nota { font-size: var(--tt-fs-sm); color: var(--tt-text-2); }
+
+/* Modal: el formulario ocupa todo el diálogo */
+.tt-modal-form { margin: 0; }
+.tt-modal h2 { font-size: var(--tt-fs-xl); }
+
+@media print {
+  .tt-toasts, #menu-toggle { display: none !important; }
+}

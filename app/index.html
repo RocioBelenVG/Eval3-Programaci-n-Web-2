@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="TriTransportes: gestión de viajes, combustible y flota">
+  <meta name="theme-color" content="#0f172a">
+  <title>TriTransportes</title>
+  <link rel="icon" href="../assets/img/icono.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/css/tt-design.css?v=3">
+  <link rel="stylesheet" href="app.css?v=1">
+  <script type="module" src="js/main.js?v=1"></script>
+</head>
+<body>
+  <a class="tt-skip" href="#contenido">Saltar al contenido</a>
+  <div id="app">
+    <aside id="tt-sidebar" class="tt-sidebar tt-on-dark" aria-label="Navegación"></aside>
+    <div class="tt-shell">
+      <header class="tt-topbar">
+        <button type="button" id="menu-toggle" class="tt-btn tt-btn--ghost tt-menu-toggle" aria-controls="tt-sidebar" aria-expanded="false">
+          <span aria-hidden="true">☰</span> Menú
+        </button>
+        <a class="tt-brand" href="#/viajes">TRI<b>TRANSPORTES</b></a>
+      </header>
+      <main id="contenido" class="tt-main" tabindex="-1">
+        <noscript><p>Esta aplicación necesita JavaScript. Puede usar el <a href="../index.php">sistema clásico</a>.</p></noscript>
+      </main>
+    </div>
+  </div>
+  <div id="tt-toasts" class="tt-toasts"></div>
+  <div id="tt-live" class="tt-sr-only" aria-live="polite" aria-atomic="true"></div>
+</body>
+</html>
