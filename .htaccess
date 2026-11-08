@@ -3,6 +3,7 @@
 # ════════════════════════════════════════════════════════════════
 Options -Indexes -MultiViews
 ServerSignature Off
+DirectoryIndex index.php index.html
 
 # ---- Cabeceras de seguridad ----
 <IfModule mod_headers.c>
