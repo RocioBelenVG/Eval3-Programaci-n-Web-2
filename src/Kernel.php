@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TriTransportes;
 
 use TriTransportes\Controller\AuthController;
+use TriTransportes\Controller\DashboardController;
 use TriTransportes\Controller\FlotaController;
 use TriTransportes\Controller\HealthController;
 use TriTransportes\Controller\IaController;
@@ -63,6 +64,11 @@ final class Kernel
         $r->add('GET', '/equipos', [FlotaController::class, 'equipos']);
 
         $r->add('POST', '/ia/resumen', [IaController::class, 'resumen'], [$A, $S, $G]);
+
+        $r->add('GET', '/dashboard/kpis', [DashboardController::class, 'kpis'], [$A, $S, $G]);
+        $r->add('GET', '/dashboard/series', [DashboardController::class, 'series'], [$A, $S, $G]);
+        $r->add('GET', '/reportes/{reporte}', [DashboardController::class, 'reporte'], [$A, $S, $G]);
+        $r->add('GET', '/reportes/{reporte}/export', [DashboardController::class, 'exportar'], [$A, $S, $G]);
 
         $r->add('GET', '/mantenciones', [FlotaController::class, 'mantencionesIndex'], [$A, $S, $G]);
         $r->add('POST', '/mantenciones', [FlotaController::class, 'mantencionesStore'], [$A, $S]);

@@ -4,8 +4,12 @@ declare(strict_types=1);
 namespace TriTransportes;
 
 use TriTransportes\Controller\AuthController;
+use TriTransportes\Controller\DashboardController;
 use TriTransportes\Controller\FlotaController;
 use TriTransportes\Controller\HealthController;
+use TriTransportes\Repository\DashboardRepository;
+use TriTransportes\Service\DashboardService;
+use TriTransportes\Service\ReporteService;
 use TriTransportes\Controller\IaController;
 use TriTransportes\Controller\ViajeController;
 use TriTransportes\Ia\GroqClient;
@@ -39,7 +43,8 @@ final class App
         $c->set(RateLimiter::class, fn (Container $c) => new RateLimiter($c->get(Database::class)->pdo));
 
         foreach ([UsuarioRepository::class, ViajeRepository::class, FlotaRepository::class, CargaRepository::class,
-                  GuiaRepository::class, MantencionRepository::class, AuditoriaRepository::class, IndicadorRepository::class] as $repo) {
+                  GuiaRepository::class, MantencionRepository::class, AuditoriaRepository::class, IndicadorRepository::class,
+                  DashboardRepository::class] as $repo) {
             $c->set($repo, fn (Container $c) => new $repo($c->get(Database::class)));
         }
 
@@ -60,6 +65,12 @@ final class App
         $c->set(AuthController::class, fn (Container $c) => new AuthController($c->get(AuthService::class)));
         $c->set(IaController::class, fn (Container $c) => new IaController($c->get(IaService::class)));
         $c->set(HealthController::class, fn (Container $c) => new HealthController($c->get(Database::class)));
+
+        $c->set(DashboardService::class, fn (Container $c) => new DashboardService($c->get(DashboardRepository::class)));
+        $c->set(ReporteService::class, fn (Container $c) => new ReporteService(
+            $c->get(DashboardRepository::class), $c->get(FlotaRepository::class), $c->get(AuditoriaRepository::class)));
+        $c->set(DashboardController::class, fn (Container $c) => new DashboardController(
+            $c->get(DashboardService::class), $c->get(ReporteService::class)));
         $c->set(ViajeController::class, fn (Container $c) => new ViajeController($c->get(ViajeService::class)));
         $c->set(FlotaController::class, fn (Container $c) => new FlotaController(
             $c->get(FlotaRepository::class), $c->get(CargaService::class), $c->get(MantencionService::class)));

@@ -23,7 +23,8 @@ final class Router
     public function add(string $method, string $pattern, array $handler, ?array $roles = null, bool $public = false): void
     {
         preg_match_all('/\{(\w+)\}/', $pattern, $m);
-        $regex = '#^' . preg_replace('/\{(\w+)\}/', '([1-9][0-9]{0,9})', $pattern) . '$#';
+        // {id} es un entero positivo; cualquier otro parámetro es un identificador corto en minúsculas
+        $regex = '#^' . preg_replace_callback('/\{(\w+)\}/', fn ($x) => $x[1] === 'id' ? '([1-9][0-9]{0,9})' : '([a-z][a-z0-9-]{0,40})', $pattern) . '$#';
         $this->routes[] = ['method' => $method, 'regex' => $regex, 'names' => $m[1], 'handler' => $handler, 'roles' => $roles, 'public' => $public];
     }
 
