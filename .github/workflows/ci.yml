@@ -1,0 +1,168 @@
+# TriTransportes · CI/CD
+#   1. pruebas      PHPUnit (unitarias + integración contra MariaDB 11.8 real)
+#   2. contenedores construye las imágenes (la etapa "test" del Dockerfile vuelve a correr las unitarias),
+#                   levanta todo con docker compose y hace una prueba de humo por HTTP
+#   3. publicar     sube las imágenes a GitHub Container Registry, solo en main y solo si 1 y 2 pasaron
+# Los secretos de prueba se generan en cada ejecución y se enmascaran: nunca aparecen en los logs.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pruebas:
+    name: Pruebas (PHPUnit)
+    runs-on: ubuntu-24.04
+    services:
+      db:
+        image: mariadb:11.8.2
+        env:
+          MARIADB_DATABASE: tritransportes
+          MARIADB_USER: tritransportes
+          MARIADB_PASSWORD: ci_db_pass
+          MARIADB_ROOT_PASSWORD: ci_root_pass
+        ports: ["3306:3306"]
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s --health-timeout=5s --health-retries=10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: pdo_mysql, mbstring, zip, curl
+          coverage: none
+          tools: composer:v2
+
+      - name: Dependencias
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Archivo .env de prueba (secretos generados y enmascarados)
+        run: |
+          JWT=$(openssl rand -hex 32); DEMO=$(openssl rand -hex 12)
+          echo "::add-mask::$JWT"; echo "::add-mask::$DEMO"
+          cat > .env <<EOF
+          APP_ENV=testing
+          DB_HOST=127.0.0.1
+          DB_PORT=3306
+          DB_NAME=tritransportes
+          DB_USER=tritransportes
+          DB_PASS=ci_db_pass
+          JWT_SECRET=$JWT
+          DEMO_PASSWORD=$DEMO
+          EOF
+
+      - name: Migraciones y datos sintéticos
+        run: |
+          vendor/bin/phinx migrate -c phinx.php
+          php database/seed_masivo.php --purgar > /dev/null
+          vendor/bin/phinx seed:run -c phinx.php -s UsuariosDemoSeeder
+
+      - name: Reversibilidad de las migraciones
+        run: |
+          vendor/bin/phinx rollback -c phinx.php -t 20261108000000
+          vendor/bin/phinx migrate -c phinx.php
+
+      - name: PHPUnit
+        run: vendor/bin/phpunit --testdox --log-junit phpunit-junit.xml
+
+      - name: Reporte de pruebas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phpunit-junit
+          path: phpunit-junit.xml
+
+  contenedores:
+    name: Contenedores (build + compose + humo)
+    needs: pruebas
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: .env para compose (secretos generados y enmascarados)
+        run: |
+          for v in DB_PASS DB_ROOT_PASSWORD JWT_SECRET DEMO_PASSWORD; do
+            val=$(openssl rand -hex 24); echo "::add-mask::$val"; echo "$v=$val" >> .env.ci
+          done
+          { grep -vE '^(DB_PASS|DB_ROOT_PASSWORD|JWT_SECRET|DEMO_PASSWORD)=' .env.example; cat .env.ci; } > .env
+          rm .env.ci
+
+      - name: Construir imágenes (incluye la etapa de pruebas del Dockerfile)
+        run: |
+          docker build --target test -t tritransportes/test .
+          docker compose build
+
+      - name: docker compose up
+        run: |
+          docker compose up -d
+          for i in $(seq 1 60); do
+            if curl -fsS http://localhost:8080/TriTransportes/api/v1/health | grep -q '"ok"'; then echo "Sistema arriba tras ${i}0 s"; break; fi
+            sleep 10
+          done
+          docker compose ps
+
+      - name: Prueba de humo por HTTP
+        run: |
+          set -a; . ./.env; set +a
+          B=http://localhost:8080/TriTransportes/api/v1
+          test "$(curl -s -o /dev/null -w '%{http_code}' $B/viajes)" = 401
+          TOKEN=$(curl -fsS -X POST $B/auth/login -H 'Content-Type: application/json' \
+            -d "{\"email\":\"supervisor@tritransportes.cl\",\"password\":\"$DEMO_PASSWORD\"}" | jq -r .token)
+          echo "::add-mask::$TOKEN"
+          curl -fsS "$B/viajes?per_page=1" -H "Authorization: Bearer $TOKEN" | jq '.meta'
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST $B/ia/resumen -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{"desde":"2026-10-01","hasta":"2026-10-31"}')" = 503
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/TriTransportes/app/)" = 200
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/TriTransportes/vendor/autoload.php)" = 404
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/TriTransportes/.env)" = 404
+          echo "Prueba de humo OK"
+
+      - name: Registros si algo falló
+        if: failure()
+        run: docker compose logs --no-color --tail=200
+
+      - name: Bajar el entorno
+        if: always()
+        run: docker compose down -v
+
+  publicar:
+    name: Publicar imágenes (GHCR)
+    needs: [pruebas, contenedores]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Nombre de las imágenes en minúsculas
+        run: echo "PREFIX=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: api
+          push: true
+          tags: ${{ env.PREFIX }}/api:${{ github.sha }},${{ env.PREFIX }}/api:latest
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: web
+          push: true
+          tags: ${{ env.PREFIX }}/web:${{ github.sha }},${{ env.PREFIX }}/web:latest

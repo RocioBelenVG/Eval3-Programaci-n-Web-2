@@ -5,6 +5,7 @@ namespace TriTransportes;
 
 use TriTransportes\Controller\AuthController;
 use TriTransportes\Controller\FlotaController;
+use TriTransportes\Controller\HealthController;
 use TriTransportes\Controller\IaController;
 use TriTransportes\Controller\ViajeController;
 use TriTransportes\Ia\GroqClient;
@@ -58,6 +59,7 @@ final class App
 
         $c->set(AuthController::class, fn (Container $c) => new AuthController($c->get(AuthService::class)));
         $c->set(IaController::class, fn (Container $c) => new IaController($c->get(IaService::class)));
+        $c->set(HealthController::class, fn (Container $c) => new HealthController($c->get(Database::class)));
         $c->set(ViajeController::class, fn (Container $c) => new ViajeController($c->get(ViajeService::class)));
         $c->set(FlotaController::class, fn (Container $c) => new FlotaController(
             $c->get(FlotaRepository::class), $c->get(CargaService::class), $c->get(MantencionService::class)));

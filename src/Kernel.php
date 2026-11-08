@@ -5,6 +5,7 @@ namespace TriTransportes;
 
 use TriTransportes\Controller\AuthController;
 use TriTransportes\Controller\FlotaController;
+use TriTransportes\Controller\HealthController;
 use TriTransportes\Controller\IaController;
 use TriTransportes\Controller\ViajeController;
 use TriTransportes\Domain\Rol;
@@ -39,6 +40,7 @@ final class Kernel
         $G = Rol::Gerencia;
         $r = new Router();
 
+        $r->add('GET', '/health', [HealthController::class, 'health'], public: true);
         $r->add('POST', '/auth/login', [AuthController::class, 'login'], public: true);
         $r->add('GET', '/auth/me', [AuthController::class, 'me']);
 

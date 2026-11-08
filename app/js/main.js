@@ -149,6 +149,14 @@ async function enrutar() {
   vistaError(404);
 }
 
+// "Saltar al contenido" mueve el foco sin tocar el hash (el hash es la ruta de la aplicación)
+document.querySelector('.tt-skip').addEventListener('click', (e) => {
+  e.preventDefault();
+  const destino = document.querySelector('#contenido h1') || document.getElementById('contenido');
+  destino.tabIndex = -1;
+  destino.focus();
+});
+
 // Menú colapsable en celular y tablet
 $('#menu-toggle').addEventListener('click', (e) => {
   const sb = $('#tt-sidebar');
