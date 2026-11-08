@@ -24,6 +24,10 @@ DirectoryIndex index.php index.html
     RewriteCond %{HTTP:X-Forwarded-Proto} !https
     RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
+    # ---- Código, dependencias, pruebas y migraciones no se sirven por web ----
+    RewriteRule ^(vendor|src|tests|database|docker)(/|$) - [F,L]
+    RewriteRule ^(phinx\.php|phpunit\.xml(\.dist)?|Dockerfile|docker-compose\.ya?ml)$ - [F,L]
+
     # ---- URLs limpias: redirigir GET /algo.php -> /algo (excepto /api/) ----
     RewriteCond %{THE_REQUEST} ^GET\s
     RewriteCond %{THE_REQUEST} \s/+(.+?)\.php[\s?] [NC]

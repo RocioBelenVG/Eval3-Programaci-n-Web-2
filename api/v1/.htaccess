@@ -1,0 +1,16 @@
+# API REST /api/v1: toda ruta que no sea un archivo existente entra por index.php.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Entregar el encabezado Authorization a PHP (Apache/LiteSpeed con PHP-FPM lo descartan)
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Rutas antiguas sin extensión que usa la interfaz web (export, export_pdf, …)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^([a-z_]+)$ $1.php [L]
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>

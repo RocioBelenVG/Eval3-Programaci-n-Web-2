@@ -1,0 +1,39 @@
+{
+    "name": "tritransportes/tritransportes",
+    "description": "TriTransportes: gestión de viajes, combustible y flota (Evaluación 3, Lenguaje de Programación Web II)",
+    "type": "project",
+    "license": "proprietary",
+    "require": {
+        "php": ">=8.3",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.5",
+        "robmorgan/phinx": "^0.16"
+    },
+    "autoload": {
+        "psr-4": {
+            "TriTransportes\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TriTransportes\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "migrate": "phinx migrate -c phinx.php",
+        "rollback": "phinx rollback -c phinx.php",
+        "seed": "phinx seed:run -c phinx.php",
+        "test": "phpunit",
+        "test:unit": "phpunit --testsuite Unit",
+        "test:integration": "phpunit --testsuite Integration"
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true
+    }
+}
