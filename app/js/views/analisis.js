@@ -33,8 +33,9 @@ function tarjetaKpi(k) {
   let delta = html`<span class="tt-kpi__delta tt-nota">Sin período anterior para comparar</span>`;
   if (v !== null) {
     const bueno = v === 0 ? null : (v > 0) === (k.mejor_si === 'sube');
-    const clase = bueno === null ? '' : bueno ? 'tt-kpi__delta--up' : 'tt-kpi__delta--down';
-    const palabra = v === 0 ? 'Sin cambio' : `${v > 0 ? 'Sube' : 'Baja'} ${fmt.n1(Math.abs(v))} %`;
+    // La flecha indica la dirección; el color y la palabra, si es una mejora o no (nunca solo el color)
+    const clase = bueno === null ? '' : bueno ? 'tt-delta--mejora' : 'tt-delta--empeora';
+    const palabra = v === 0 ? 'Sin cambio' : `${v > 0 ? '▲ Sube' : '▼ Baja'} ${fmt.n1(Math.abs(v))} %`;
     delta = html`<span class="tt-kpi__delta ${clase}">${palabra} vs. período anterior${bueno === null ? '' : bueno ? ' (mejora)' : ' (empeora)'}</span>`;
   }
   return html`<article class="tt-card tt-kpi tt-kpi--accent" aria-label="${k.titulo}">
@@ -135,8 +136,10 @@ export async function dashboard({ montar, signal }) {
       const base = { responsive: true, maintainAspectRatio: false, animation: sinMovimiento() ? false : { duration: 400 }, plugins: { legend: { position: 'bottom' } } };
       graficos.push(new Chart(document.getElementById('g-viajes'), { type: 'bar', data: { labels: vm.labels, datasets: vm.datasets.map((d, i) => ({ ...d, backgroundColor: [C.navy, C.rojo, C.ambar][i] })) },
         options: { ...base, scales: { x: { stacked: true }, y: { stacked: true, title: { display: true, text: 'Viajes' } } } } }));
-      graficos.push(new Chart(document.getElementById('g-costo'), { type: 'line', data: { labels: cm.labels, datasets: cm.datasets.map((d, i) => ({ ...d, borderColor: [C.ambar, C.gris][i], backgroundColor: [C.ambar, C.gris][i], borderDash: i ? [6, 4] : [], tension: 0.2, pointStyle: i ? 'rect' : 'circle' })) },
-        options: { ...base, scales: { y: { title: { display: true, text: 'CLP' }, ticks: { callback: (v) => fmt.clp(v) } } }, plugins: { ...base.plugins, tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${fmt.clp(c.parsed.y)}` } } } } }));
+      graficos.push(new Chart(document.getElementById('g-costo'), { type: 'line', data: { labels: cm.labels, datasets: cm.datasets.map((d, i) => ({ ...d, borderColor: [C.ambar, C.gris][i], backgroundColor: [C.ambar, C.gris][i], borderDash: i ? [6, 4] : [], tension: 0.2, pointStyle: i ? 'rect' : 'circle', yAxisID: i ? 'y1' : 'y' })) },
+        options: { ...base, scales: {
+          y: { title: { display: true, text: 'Costo por viaje (CLP)' }, ticks: { callback: (v) => fmt.clp(v) } },
+          y1: { position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: 'Precio por litro (CLP)' }, ticks: { callback: (v) => fmt.clp(v) } } }, plugins: { ...base.plugins, tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${fmt.clp(c.parsed.y)}` } } } } }));
       graficos.push(new Chart(document.getElementById('g-rend'), { type: 'bar', data: { labels: rv.labels, datasets: [{ ...rv.datasets[0], backgroundColor: rv.labels.map((_, i) => (i === rv.labels.length - 1 ? C.rojo : C.navy)) }] },
         options: { ...base, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { title: { display: true, text: 'km por litro' } } } } }));
       graficos.push(new Chart(document.getElementById('g-estado'), { type: 'bar',
@@ -291,6 +294,11 @@ export async function reportes({ montar, rol, usuario, signal }) {
     } catch (err) { toast(err.message, 'danger'); }
   });
   raiz.querySelector('#r-imprimir').addEventListener('click', () => window.print());
+  // Chart.js no se redimensiona solo al imprimir: se ajusta al ancho de la hoja antes y se restaura después
+  const alImprimir = () => grafico?.resize();
+  window.addEventListener('beforeprint', alImprimir);
+  window.addEventListener('afterprint', alImprimir);
+  signal.addEventListener('abort', () => { window.removeEventListener('beforeprint', alImprimir); window.removeEventListener('afterprint', alImprimir); });
   marcar();
   await cargar();
 }

@@ -154,6 +154,15 @@ async function enrutar() {
   vistaError(404);
 }
 
+// Tablas con desplazamiento horizontal: región enfocable con nombre, para recorrerlas con el teclado (WCAG 2.1.1)
+new MutationObserver(() => {
+  document.querySelectorAll('.tt-table-wrap:not([tabindex])').forEach((w) => {
+    w.tabIndex = 0;
+    w.setAttribute('role', 'region');
+    w.setAttribute('aria-label', w.querySelector('caption')?.textContent.trim() || 'Tabla');
+  });
+}).observe(document.getElementById('contenido'), { childList: true, subtree: true });
+
 // "Saltar al contenido" mueve el foco sin tocar el hash (el hash es la ruta de la aplicación)
 document.querySelector('.tt-skip').addEventListener('click', (e) => {
   e.preventDefault();

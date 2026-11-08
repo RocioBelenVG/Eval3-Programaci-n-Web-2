@@ -211,7 +211,7 @@ a:hover { color: var(--tt-navy-900); }
 .tt-sort:focus-visible { outline: 3px solid var(--tt-focus); outline-offset: 2px; }
 
 /* Celular: filas como tarjetas apiladas (las columnas usan data-label) */
-@media (max-width: 47.99em) {
+@media screen and (max-width: 47.99em) {
   .tt-table--stack thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
   .tt-table--stack, .tt-table--stack tbody, .tt-table--stack tr, .tt-table--stack td { display: block; width: 100%; }
   .tt-table--stack tr { border-bottom: 1px solid var(--tt-slate-300); padding: var(--tt-space-2) 0; }

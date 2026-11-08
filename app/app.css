@@ -50,7 +50,7 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus { outline: none; }
 .tt-table a { display: inline-flex; align-items: center; min-height: 24px; font-weight: var(--tt-fw-semibold); }
 .tt-table td .tt-btn { white-space: nowrap; }
 .tt-table td[data-label="Fecha"] { white-space: nowrap; }
-@media (max-width: 47.99em) {
+@media screen and (max-width: 47.99em) {
   .tt-table--stack caption { display: block; width: 100%; }
   .tt-table--stack td { text-align: right; }
   .tt-table--stack td::before { text-align: left; }
@@ -71,6 +71,8 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus { outline: none; }
 .tt-modal h2 { font-size: var(--tt-fs-xl); }
 
 /* Dashboard y reportes */
+.tt-delta--mejora { color: var(--tt-success); }
+.tt-delta--empeora { color: var(--tt-danger); }
 .tt-kpi .tt-kpi__label { margin: 0; font-size: var(--tt-fs-sm); }
 .tt-kpi .tt-kpi__value { margin: 0; font-size: var(--tt-fs-xl); }
 .tt-kpi__formula { margin: var(--tt-space-2) 0 0; font-size: var(--tt-fs-xs); }
@@ -89,19 +91,15 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus { outline: none; }
 .tt-tabs a[aria-current="page"] .tt-nota { color: var(--tt-slate-300); }
 .tt-exportar { align-items: center; margin-bottom: var(--tt-space-4); }
 .tt-exportar .tt-nota { flex-basis: 100%; margin: 0; }
+.tt-reporte td:first-child { white-space: nowrap; }
 .tt-reporte tfoot th, .tt-reporte tfoot td { font-weight: var(--tt-fw-bold); background: var(--tt-amber-100); border-top: 2px solid var(--tt-navy-900); }
-@media (max-width: 47.99em) { .tt-reporte tfoot { display: block; } .tt-reporte tfoot tr { display: block; } .tt-reporte tfoot th, .tt-reporte tfoot td:empty { display: none; } }
+@media screen and (max-width: 47.99em) { .tt-reporte tfoot { display: block; } .tt-reporte tfoot tr { display: block; } .tt-reporte tfoot th, .tt-reporte tfoot td:empty { display: none; } }
 
 @media print {
   .tt-toasts, #menu-toggle, .tt-page-head, .tt-no-print, .tt-breadcrumb { display: none !important; }
   .tt-print-head { display: flex !important; justify-content: space-between; border-bottom: 2px solid #000; margin-bottom: 8pt; }
-  .tt-grafico__lienzo { height: 12rem; }
-  .tt-table--stack thead { position: static; width: auto; height: auto; clip: auto; }
-  .tt-table--stack, .tt-table--stack tbody { display: table-row-group; }
-  .tt-table--stack { display: table; }
-  .tt-table--stack tr { display: table-row; }
-  .tt-table--stack td { display: table-cell; }
-  .tt-table--stack td::before { content: none; }
+  .tt-grafico { break-inside: avoid; }
+  .tt-grafico__lienzo { width: 100%; }
   .tt-reporte { font-size: 8.5pt; }
   .tt-reporte th, .tt-reporte td { padding: 3pt 4pt; }
 }
