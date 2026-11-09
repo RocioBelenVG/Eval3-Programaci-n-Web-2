@@ -76,7 +76,7 @@ Dominio                                      →  /src/Domain    (entidades, enu
 - [x] Listados y formularios consumiendo la API (búsqueda, filtros, orden y paginación).
 - [x] Sistema de diseño propio y accesibilidad WCAG 2.2 AA (foco visible, enlace para saltar al contenido, errores anunciados); axe-core sin infracciones.
 - [x] Endpoint de IA con valor para el dominio y pruebas con mock.
-- [x] Docker + compose + GitHub Actions (archivos listos; primera ejecución al publicar el repositorio en GitHub).
+- [x] Docker + compose + GitHub Actions (primera ejecución en verde en GitHub Actions: pruebas, compose, humo, restauración, reversión y publicación).
 
 ### Hito 4 — Semana 14: análisis, reportes y despliegue
 - [x] 6 indicadores con fórmula y 4 o más gráficos con filtros y tabla accesible.

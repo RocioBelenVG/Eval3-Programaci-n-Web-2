@@ -1,5 +1,7 @@
 # TriTransportes
 
+[![CI](https://github.com/RocioBelenVG/Eval3-Programaci-n-Web-2/actions/workflows/ci.yml/badge.svg)](https://github.com/RocioBelenVG/Eval3-Programaci-n-Web-2/actions/workflows/ci.yml)
+
 Sistema web de gestión de **flota, transporte y combustible** para una empresa de transporte de carga (ficticia: TRITRANSPORTES SpA).
 Es el proyecto integrador de la **Evaluación 3 de Lenguaje de Programación Web II**.
 
@@ -10,6 +12,7 @@ Es el proyecto integrador de la **Evaluación 3 de Lenguaje de Programación Web
 | Documento | Contenido |
 |---|---|
 | Informe técnico (PDF) | `Informe_Tecnico_TriTransportes.pdf`, en la carpeta de entrega: las 11 secciones de la pauta, matriz de cumplimiento y rúbrica autoevaluada |
+| [Evidencia del pipeline](docs/evidencias/ci/primera-ejecucion.md) | Primera ejecución en GitHub Actions, paso por paso: pruebas, `docker compose up`, prueba de humo, restauración del respaldo, reversión de migraciones y publicación |
 | [Evidencia del Hito 4](docs/evidencias/hito4/) | Lighthouse, axe, tiempos del dashboard (RNF02), archivos exportados de los 3 reportes y protocolos de NVDA y del ensayo |
 | [06 · Manual de usuario](docs/06_manual_usuario.md) | Uso breve por rol: Conductor, Supervisor, Gerencia y Administrador |
 | [Diagramas exportados](docs/diagramas/) | Capas, componentes, entidad–relación, estados del viaje y despliegue en SVG (fuentes Mermaid en los documentos 02 y 03) |
@@ -90,10 +93,10 @@ Aplicación de una página en `app/` (HTML, CSS y JavaScript nativo, sin framewo
 
 `.github/workflows/ci.yml` corre en cada *push* y *pull request*:
 1. **Pruebas:** PHPUnit (unitarias y de integración) contra MariaDB 11.8, con migraciones, datos sintéticos y la prueba de `rollback`.
-2. **Contenedores:** construye las imágenes (la etapa `test` del Dockerfile vuelve a correr las pruebas unitarias), ejecuta `docker compose up` y hace una prueba de humo por HTTP.
+2. **Contenedores:** construye las imágenes (la etapa `test` del Dockerfile vuelve a correr las pruebas unitarias), ejecuta `docker compose up`, hace una prueba de humo por HTTP, restaura un respaldo en una base vacía comparando conteos y revierte migraciones dentro de los contenedores.
 3. **Publicación:** solo en `main` y solo si las etapas anteriores pasan, sube las imágenes `api` y `web` a GitHub Container Registry.
 
-Los secretos de prueba se generan en cada ejecución y se enmascaran en los registros.
+Los secretos de prueba se generan en cada ejecución y se enmascaran en los registros. Ejecuciones: https://github.com/RocioBelenVG/Eval3-Programaci-n-Web-2/actions
 
 ## API REST
 
@@ -151,11 +154,13 @@ Todos los datos son **sintéticos**: los genera `database/seed_masivo.php` con u
 
 | Herramienta | Propósito |
 |---|---|
-| Claude (Anthropic) | Análisis de la pauta, adaptación del sistema base, redacción de la documentación técnica y apoyo en la programación. Todo el código y los documentos son revisados por el equipo, que puede explicarlos y modificarlos en vivo. |
+| Claude (Anthropic) | Análisis de la pauta, adaptación del sistema base, redacción de la documentación técnica y apoyo en la programación. Todo el código y los documentos son revisados por la autora, que puede explicarlos y modificarlos en vivo. |
 | Groq · Llama 3.3 70B | Servicio de IA integrado al sistema (resumen gerencial y asistente). |
 
 ## Equipo
 
 | Integrante | Rol en el proyecto |
 |---|---|
-| _(completar)_ | |
+| Rocío Riquelme Torres | Todas las áreas: backend, base de datos, front end, BI y DevOps |
+
+Repositorio: https://github.com/RocioBelenVG/Eval3-Programaci-n-Web-2
